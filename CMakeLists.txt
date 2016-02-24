@@ -16,6 +16,18 @@ if(APPLE)
     set(CMAKE_MACOSX_RPATH ON)
 endif(APPLE)
 
+if(WIN32)
+    set(CLINK_SLEEP_MACRO "Sleep(ms)")
+else()
+    set(CLINK_SLEEP_MACRO "usleep(ms * 1000)")
+endif(WIN32)
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/clink/src/config.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/config.h
+    @ONLY)
+
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
 set(OCL_UTILS_DIR ${CMAKE_CURRENT_LIST_DIR}/debug)
 
 option(BUILD_SHARED_LIBS "build shared libraries" OFF)
