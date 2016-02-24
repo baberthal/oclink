@@ -1,0 +1,6 @@
+-x
+c
+-I/Users/morgan/projects/c_family/oclink/clink
+-I/Users/morgan/projects/c_family/oclink/clink/include
+-I/Users/morgan/projects/c_family/oclink/debug
+-I/Users/morgan/projects/c_family/oclink/oclink
