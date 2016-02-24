@@ -10,7 +10,10 @@
 #define clink_h
 
 #include "config.h"
-
+#include "clink_proto.h"
 #include "corsair_link.h"
+#include "clink_fan.h"
+#include "clink_led.h"
+#include "clink_temp.h"
 
 #endif /* clink_h */
