@@ -1,0 +1,35 @@
+language: c
+
+sudo: required
+
+os:
+  - linux
+  - osx
+
+compiler:
+  - clang
+  - gcc
+
+addons:
+  apt:
+    packages:
+      - doxygen
+      - libudev-dev
+      - doxygen-latex
+      - graphviz
+
+before_install:
+  - echo $LANG
+  - echo $LC_ALL
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get -qq update; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get install libusb-1.0.0-dev; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get install libfox-1.6-dev; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then ./scripts/linux_deps.bash; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew install hidapi doxygen graphviz; fi
+
+before_script:
+  - mkdir build
+  - cd build
+  - cmake ..
+
+script: make
