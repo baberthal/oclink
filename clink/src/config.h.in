@@ -1,0 +1,11 @@
+#define CLINK_VERSION_MAJOR @VERSION_MAJOR@
+#define CLINK_VERSION_MINOR @VERSION_MINOR@
+#define CLINK_VERSION_TEENY @VERSION_TEENY@
+#define CLINK_VERSION_STRING "@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_TEENY@"
+
+#define SLEEP(ms)                                                              \
+    do {                                                                       \
+        @CLINK_SLEEP_MACRO@;                                                   \
+        sleep_total += ms;                                                     \
+    } while (0)
+
