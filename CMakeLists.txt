@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 2.8)
 project(OpenCorsairLink)
 
+set(VERSION_MAJOR 0 CACHE INTERNAL "Project major version.")
+set(VERSION_MINOR 2 CACHE INTERNAL "Project minor version.")
+set(VERSION_TEENY 0 CACHE INTERNAL "Project teeny version.")
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
@@ -37,11 +41,8 @@ include_directories("${CMAKE_CURRENT_LIST_DIR}/debug")
 add_subdirectory(debug)
 
 include_directories("${CMAKE_CURRENT_LIST_DIR}/clink" "${CMAKE_CURRENT_LIST_DIR}/oclink")
+
 add_subdirectory(clink)
 add_subdirectory(oclink)
-
-set(VERSION_MAJOR 0 CACHE INTERNAL "Project major version.")
-set(VERSION_MINOR 2 CACHE INTERNAL "Project minor version.")
-set(VERSION_TEENY 0 CACHE INTERNAL "Project teeny version.")
-
+add_subdirectory(tui)
 add_subdirectory(doc)

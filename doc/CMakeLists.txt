@@ -3,6 +3,36 @@ option(BUILD_DOCUMENTATION
     "Create and install the doxygen documentation (requires doxygen)."
     ${DOXYGEN_FOUND})
 
+include(CMakeDependentOption)
+option(doxy_gen_html "Generate HTML Documentation" ON)
+option(doxy_gen_latex "Generate LaTeX Documentation" ON)
+option(doxy_gen_man "Generate Man Pages" ON)
+option(doxy_gen_docset "Generate Xcode Docset" OFF)
+
+mark_as_advanced(doxy_gen_html)
+mark_as_advanced(doxy_gen_latex)
+mark_as_advanced(doxy_gen_man)
+mark_as_advanced(doxy_gen_docset)
+
+if(doxy_gen_html)
+    set(doxy_gen_html_flag "YES" CACHE INTERNAL "internal use only")
+endif(doxy_gen_html)
+
+if(doxy_gen_latex)
+    set(doxy_gen_latex_flag "YES" CACHE INTERNAL "internal use only")
+endif(doxy_gen_latex)
+
+if(doxy_gen_man)
+    set(doxy_gen_man_flag "YES" CACHE INTERNAL "internal use only")
+endif(doxy_gen_man)
+
+if(doxy_gen_docset)
+    set(doxy_gen_html_flag "YES" CACHE INTERNAL "internal use only")
+endif(doxy_gen_docset)
+
+set(doxy_main_page ${PROJECT_SOURCE_DIR}/README.md CACHE INTERNAL "Doxygen main page")
+mark_as_advanced(doxy_main_page)
+
 if(BUILD_DOCUMENTATION)
     if(NOT DOXYGEN_FOUND)
         message(FATAL_ERROR "Doxygen is needed to build the documentation.")
