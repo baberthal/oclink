@@ -17,6 +17,7 @@ addons:
       - libudev-dev
       - doxygen-latex
       - graphviz
+      - cmake
 
 before_install:
   - echo $LANG
