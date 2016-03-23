@@ -1,0 +1,195 @@
+#!/usr/bin/env ruby
+
+require 'colorize'
+require 'open3'
+require 'ruby-progressbar'
+
+class JMLRunner
+  class TCase # rubocop:disable Metrics/ClassLength
+    attr_reader :name
+    attr_accessor :cmd, :env
+    def initialize(name, options = {})
+      @name = name
+      @env = options[:env]
+      @log_file = options[:log_file]
+      @failures = []
+      @test_stderr = StringIO.new
+      @progressbar = ProgressBar.create
+    end
+
+    def run
+      puts start_message
+      Open3.popen3(@env, @name) do |_, sout, serr, _|
+        while (line = sout.gets) do conditional_puts(line) end
+        while (line_err = serr.gets) do @test_stderr.puts(line_err) end
+      end
+      puts nil, 'STDERR:'.colorize(:green).bold, @test_stderr.string
+    end
+
+    private
+
+    def term_width
+      result = if ENV['COLUMNS']
+                 ENV['COLUMNS'].to_i
+               else
+                 unix? ? dynamic_width : 80
+               end
+      result < 10 ? 80 : result
+    rescue
+      80
+    end
+
+    def unix?
+      RUBY_PLATFORM =~
+        /(aix|darwin|linux|(net|free|open)bsd|cygwin|solaris|irix|hpux)/i
+    end
+
+    def dynamic_width
+      @dynamic_width ||= (dynamic_width_stty.nonzero? || dynamic_width_tput)
+    end
+
+    # rubocop:disable Style/CommandLiteral
+    def dynamic_width_stty
+      %x(stty size 2>/dev/null).split[1].to_i
+    end
+
+    def dynamic_width_tput
+      %x(tput cols 2>/dev/null).to_i
+    end
+
+    def start_message
+      puts '=' * term_width
+      puts "Running #{File.basename(@name)}".colorize(:yellow)
+    end
+
+    def summary_pattern
+      # rubocop:disable Style/RegexpLiteral
+      @summary_pattern ||= %r{
+      (?<pass_pctg>\d+)%:(\s+)
+      (Checks:(\s+))(?<n_checks>\d+)(.+)
+      (Failures:(\s+))(?<n_failures>\d+)(.+)
+      (Errors:(\s+))(?<n_errors>\d+)
+      }x
+      # rubocop:enable All
+    end
+
+    def line_type(line)
+      case line
+      when /Passed$/ then return :pass
+      when /(Checks)(.+)(Failures)(.+)(Errors)(.+)|Results/ then return :summary
+      when /:F:/i then return :failure
+      when /Error$/ then return :error
+      end
+    end
+
+    def conditional_puts(line)
+      case line_type(line)
+      when :pass then print '.'.colorize(:green)
+      when :failure then handle_failure(line)
+      when :error then puts line.colorize(:yellow)
+      when :summary then generate_summary(line)
+      end
+    end
+
+    def generate_summary(line) # rubocop:disable Metrics/AbcSize
+      match = summary_pattern.match(line)
+      return unless match
+      return if @summary
+      @summary = "\n#{match[:pass_pctg]}% Passed ".colorize(:white).bold
+      @summary << '('
+      @summary << "#{match[:n_checks]} Checks, ".colorize(:green)
+      @summary << "#{match[:n_failures]} Failures, ".colorize(:red)
+      @summary << "#{match[:n_errors]} Errors".colorize(:yellow)
+      @summary << ')'
+      print_unhandled_output
+    end
+
+    def print_unhandled_output
+      puts @summary
+      unless @failures.empty?
+        puts "\nFAILURES\n========".colorize(:red).bold
+        puts @failures.join("\n\n")
+      end
+    end
+
+    def handle_failure(line)
+      print 'F'.colorize(:red)
+      match = failure_pattern.match(line)
+      return unless match
+      @failures << colorize_fail_msg(match)
+    end
+
+    def colorize_fail_msg(match) # rubocop:disable Metrics/AbcSize
+      file = File.basename(match[:file])
+      this = "#{file.to_s.colorize(:white)}:#{match[:line].colorize(:blue)}"
+      this << "\nTest Case: #{match[:tcase].to_s.colorize(:yellow)}\n"
+      this << "Function: #{match[:fn].to_s.colorize(:blue)}\n"
+      this << 'Reason: '
+      reason = "Expected #{match[:var]} to #{match[:op]} #{match[:expected]}, "
+      reason << "got #{match[:reason]}"
+      this << reason.colorize(:red)
+      this
+    end
+
+    def failure_pattern
+      @failure_pattern ||= %r{
+      (?<file>\S+):
+      (?<line>\d+):(?:\S):
+      (?<tcase>[a-zA-Z]+):
+      (?<fn>[a-zA-Z_]+):(?:[\d]):\s*(Assertion\s*)
+      ('(?<var>\S+)?\s(?<op>\S+)\s?(?<expected>.+)'
+      \s*(?:failed:)
+      (?<reason>.+))
+      }x
+    end
+  end
+
+  attr_reader :file_path
+  attr_reader :built_products
+  attr_reader :log_file
+  attr_accessor :env
+
+  def initialize(file_path)
+    @file_path = File.expand_path(file_path)
+    @built_products = Dir["#{File.expand_path(file_path)}/*"].select do |f|
+      f =~ /(.+)_tests?$/
+    end
+    @log_file = ENV['LOG_FILE'] || File.join(@file_path, 'tests.log')
+    @env = {}
+    check_env
+  end
+
+  def check_env
+    verbosity = default_env('CK_VERBOSITY', 'normal')
+    ck_log_file = default_env('CK_LOG_FILE_NAME', '-')
+    @env['CK_VERBOSITY'] = verbosity
+    @env['CK_LOG_FILE_NAME'] = ck_log_file
+  end
+
+  def default_env(env_var, default)
+    return ENV[env_var] unless empty_env?(env_var)
+    default
+  end
+
+  def empty_env?(env_var)
+    ENV[env_var].nil? || ENV[env_var].empty?
+  end
+
+  def test_list
+    message = ''
+    @built_products.each { |p| message << "    #{File.basename(p)}\n" }
+    message.colorize(:green)
+  end
+
+  def run
+    puts 'Running Tests:'.colorize(:white).bold
+    puts test_list
+    @built_products.each { |p| run_one(p) }
+  end
+
+  def run_one(test)
+    TCase.new(test, env: @env, log_file: @log_file).run
+  end
+end
+
+JMLRunner.new(ARGV.first).run

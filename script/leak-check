@@ -1,0 +1,19 @@
+#!/bin/bash
+
+if [ -z $VALGRIND_PROGRAM ]; then
+  VALGRIND_PROGRAM=`which valgrind`
+fi
+
+if [ -z $VALGRIND_LOG_FILE ]; then
+  VALGRIND_LOG_FILE="/Users/morgan/projects/c_family/devpkg/build/memcheck.log"
+fi
+
+if [ -z $VALGRIND_EXTRA_ARGS ]; then
+  VALGRIND_EXTRA_ARGS="--leak-check=full --show-leak-kinds=all --log-file=${VALGRIND_LOG_FILE}"
+fi
+
+main() {
+  CK_FORK=no "${VALGRIND_PROGRAM}" ${VALGRIND_EXTRA_ARGS} $@
+}
+
+main "$@"
