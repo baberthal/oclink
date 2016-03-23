@@ -32,6 +32,12 @@ endif(NOT LIB_INSTALL_DIR)
 
 include_directories(. ${CMAKE_CURRENT_BINARY_DIR})
 
+include(CheckIncludeFile)
+check_include_file(unistd.h HAVE_UNISTD_H)
+check_include_file(stdlib.h HAVE_STDLIB_H)
+check_include_file(stdint.h HAVE_STDINT_H)
+check_include_file(stdbool.h HAVE_STDBOOL_H)
+
 if(WIN32)
     set(CLINK_SLEEP_MACRO "Sleep(ms)")
 else()
