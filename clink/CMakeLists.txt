@@ -12,3 +12,8 @@ install(DIRECTORY
     DESTINATION include/clink
     FILES_MATCHING PATTERN "*.h"
     PATTERN "oclink/*" EXCLUDE)
+
+if(OCL_TESTS)
+    add_subdirectory(test)
+    enable_testing()
+endif(OCL_TESTS)

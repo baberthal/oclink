@@ -33,6 +33,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/clink/src/config.h.in
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 set(OCL_UTILS_DIR ${CMAKE_CURRENT_LIST_DIR}/debug)
+set(OCL_SCRIPT_DIR ${CMAKE_CURRENT_LIST_DIR}/script)
+option(OCL_TESTS "Build all test targets and enable testing" ON)
 
 option(BUILD_SHARED_LIBS "build shared libraries" OFF)
 set(HIDAPI_PREFIX "/usr/local" CACHE PATH "prefix where hidapi is installed")
