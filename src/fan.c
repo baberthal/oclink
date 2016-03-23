@@ -379,9 +379,9 @@ int ocl_fan_connected_fans(OCL_Fan *fan)
         cl->buf[7] = FAN_Mode;          // Command data...
 
         int res = hid_write(cl->handle, cl->buf, 11);
-        jml_check(res >= 0, "Unable to write -- %s", hid_error(cl->handle));
+        jml_check(res >= 0, "Unable to write -- %ls", hid_error(cl->handle));
         res = cl->hid_read_wrapper(cl->handle, cl->buf);
-        jml_check(res >= 0, "Unable to read -- %s", hid_error(cl->handle));
+        jml_check(res >= 0, "Unable to read -- %ls", hid_error(cl->handle));
         fanMode = cl->buf[4];
 
         if (fanMode != 0x03) {

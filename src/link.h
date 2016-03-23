@@ -3,6 +3,7 @@
 
 #include <hidapi/hidapi.h>
 #include <stdlib.h>
+#include "clink_export.h"
 
 /**
  *  @file corsair_link.h
@@ -51,14 +52,14 @@ typedef enum {
  *
  *  @return The structure
  */
-OCL_Link *ocl_link_alloc(void);
+CLINK_EXPORT OCL_Link *ocl_link_alloc(void);
 
 /**
  *  @brief Allocate and initialize the shared link structure
  *
  *  @return The shared link structure. Should always return the same structure
  */
-OCL_Link *ocl_link_shared_link(void);
+CLINK_EXPORT OCL_Link *ocl_link_shared_link(void);
 
 /**
  *  @brief Initialize a CorsairLink structure. It must first be allocated using
@@ -68,21 +69,21 @@ OCL_Link *ocl_link_shared_link(void);
  *
  *  @return 0 if successful, -1 otherwise
  */
-int ocl_link_init(OCL_Link *link);
+CLINK_EXPORT int ocl_link_init(OCL_Link *link);
 
 /**
  *  @brief Close the link
  *
  *  @param link The link to close
  */
-void ocl_link_close(OCL_Link *link);
+CLINK_EXPORT void ocl_link_close(OCL_Link *link);
 
 /**
  *  @brief Free the link
  *
  *  @param link The link to free
  */
-void ocl_link_free(OCL_Link *link);
+CLINK_EXPORT void ocl_link_free(OCL_Link *link);
 
 /**
  *  @brief Get the device ID of the attached CorsairLink system
@@ -91,7 +92,7 @@ void ocl_link_free(OCL_Link *link);
  *
  *  @return The device id of the attached CorsairLinkSystem
  */
-int ocl_link_get_device_id(OCL_Link *link);
+CLINK_EXPORT int ocl_link_get_device_id(OCL_Link *link);
 
 /**
  *  @brief Get the firmware version of the attached CorsairLink system
@@ -100,7 +101,7 @@ int ocl_link_get_device_id(OCL_Link *link);
  *
  *  @return The firmware version
  */
-int ocl_link_get_fw_version(OCL_Link *link);
+CLINK_EXPORT int ocl_link_get_fw_version(OCL_Link *link);
 
 /**
  *  @brief Copy the product name string into `out_name`
@@ -110,7 +111,7 @@ int ocl_link_get_fw_version(OCL_Link *link);
  *
  *  @return 0 if successful, -1 otherwise
  */
-int ocl_link_get_product_name(OCL_Link *link, char *out_name);
+CLINK_EXPORT int ocl_link_get_product_name(OCL_Link *link, char *out_name);
 
 /**
  *  @brief Get the device status of the attached CorsairLink system
@@ -119,7 +120,7 @@ int ocl_link_get_product_name(OCL_Link *link, char *out_name);
  *
  *  @return The device status, expressed as an integer
  */
-int ocl_link_get_device_status(OCL_Link *link);
+CLINK_EXPORT int ocl_link_get_device_status(OCL_Link *link);
 
 /** @} */
 

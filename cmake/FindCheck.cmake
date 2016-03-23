@@ -16,8 +16,6 @@
 #  BSD license.
 #  For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
-message(STATUS "Check Prefix: ${CHECK_PREFIX}")
-
 find_package(PkgConfig)
 pkg_check_modules(PC_CHECK QUIET check)
 
@@ -29,9 +27,6 @@ find_library(CHECK_LIBRARY
     NAMES check
     PATHS ${CHECK_PREFIX}/lib
     HINTS ${PC_CHECK_LIBDIR} ${PC_CHECK_LIBRARY_DIRS})
-
-message(STATUS "CHECK LIBRARY - ${CHECK_LIBRARY}")
-message(STATUS "CHECK INCLUDE - ${CHECK_INCLUDE_DIR}")
 
 if("${CHECK_LIBRARY}" STREQUAL "CHECK_LIBRARY-NOTFOUND")
 

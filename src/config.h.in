@@ -1,0 +1,11 @@
+#define CLINK_VERSION_MAJOR @PROJECT_VERSION_MAJOR @
+#define CLINK_VERSION_MINOR @PROJECT_VERSION_MINOR @
+#define CLINK_VERSION_TEENY @PROJECT_VERSION_PATCH @
+#define CLINK_VERSION_STRING \
+    "@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@"
+
+#define SLEEP(ms)             \
+    do {                      \
+        @CLINK_SLEEP_MACRO @; \
+        sleep_total += ms;    \
+    } while (0)

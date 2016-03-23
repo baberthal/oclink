@@ -24,7 +24,7 @@ typedef struct ocl_temp {
  *
  *  @return The newly allocated \ref OCL_Temp structure
  */
-OCL_Temp *ocl_temp_alloc(OCL_Link *link);
+CLINK_EXPORT OCL_Temp *ocl_temp_alloc(OCL_Link *link);
 
 /**
  *  @brief Select a temperature sensor
@@ -34,7 +34,7 @@ OCL_Temp *ocl_temp_alloc(OCL_Link *link);
  *
  *  @return The index of the newly selected sensor
  */
-int ocl_temp_select_sensor(OCL_Temp *temp, int sensor);
+CLINK_EXPORT int ocl_temp_select_sensor(OCL_Temp *temp, int sensor);
 
 /**
  *  @brief Get the currently selected sensor
@@ -46,7 +46,7 @@ int ocl_temp_select_sensor(OCL_Temp *temp, int sensor);
  *
  *  @return The index of the selected sensor
  */
-int ocl_temp_current_sensor(OCL_Temp *temp);
+CLINK_EXPORT int ocl_temp_current_sensor(OCL_Temp *temp);
 
 /**
  *  @brief Get the number of temperature sensors attached to the system
@@ -55,7 +55,7 @@ int ocl_temp_current_sensor(OCL_Temp *temp);
  *
  *  @return The number of sensors attached to the system
  */
-int ocl_temp_get_temp_sensors(OCL_Temp *temp);
+CLINK_EXPORT int ocl_temp_get_temp_sensors(OCL_Temp *temp);
 
 /**
  *  @brief Get the current temperature of the currently selected sensor
@@ -64,7 +64,7 @@ int ocl_temp_get_temp_sensors(OCL_Temp *temp);
  *
  *  @return The temperature of the selected sensor (in celsius)
  */
-int ocl_temp_get_temp(OCL_Temp *temp);
+CLINK_EXPORT float ocl_temp_get_temp(OCL_Temp *temp);
 
 /**
  *  @brief Get the current temp limit of the selected sensor
@@ -73,7 +73,7 @@ int ocl_temp_get_temp(OCL_Temp *temp);
  *
  *  @return The temp limit of the selected sensor
  */
-int ocl_temp_get_temp_limit(OCL_Temp *temp);
+CLINK_EXPORT int ocl_temp_get_temp_limit(OCL_Temp *temp);
 
 /**
  *  @brief Set the temp limit of the selected sensor
@@ -83,14 +83,14 @@ int ocl_temp_get_temp_limit(OCL_Temp *temp);
  *
  *  @return 0 if successful, -1 otherwise
  */
-int ocl_temp_set_temp_limit(OCL_Temp *temp, int limit);
+CLINK_EXPORT int ocl_temp_set_temp_limit(OCL_Temp *temp, int limit);
 
 /**
  *  @brief Free an \ref OCL_Temp structure while preserving it's associated link
  *
  *  @param temp The \ref OCL_Temp structure to free
  */
-void ocl_temp_free(OCL_Temp *temp);
+CLINK_EXPORT void ocl_temp_free(OCL_Temp *temp);
 
 /** @} */
 

@@ -58,7 +58,7 @@ typedef struct ocl_fan_table ocl_fan_rpm_table;
  *
  *  \return The newly allocated fan structure
  */
-OCL_Fan *ocl_fan_alloc(OCL_Link *link);
+CLINK_EXPORT OCL_Fan *ocl_fan_alloc(OCL_Link *link);
 
 /**
  *  Get the number of connected fans
@@ -67,7 +67,7 @@ OCL_Fan *ocl_fan_alloc(OCL_Link *link);
  *
  *  \return The number of connected fans
  */
-int ocl_fan_connected_fans(OCL_Fan *fan);
+CLINK_EXPORT int ocl_fan_connected_fans(OCL_Fan *fan);
 
 /**
  *  Read the information of the fan at index idx into the pointer `fan_info`
@@ -76,7 +76,8 @@ int ocl_fan_connected_fans(OCL_Fan *fan);
  *  \param idx      The index of the fan for which to get info
  *  \param fan_info A pointer to the fan info structure to put the values into
  */
-void ocl_fan_read_fans_info(OCL_Fan *fan, int idx, CorsairFanInfo *fan_info);
+CLINK_EXPORT void ocl_fan_read_fans_info(OCL_Fan *fan, int idx,
+                                         CorsairFanInfo *fan_info);
 
 /**
  *  Set the information for fan at index idx using the values in the structure
@@ -88,14 +89,15 @@ void ocl_fan_read_fans_info(OCL_Fan *fan, int idx, CorsairFanInfo *fan_info);
  *
  *  \return 0 if successful, -1 otherwise
  */
-int ocl_fan_set_fans_info(OCL_Fan *fan, int idx, CorsairFanInfo fan_info);
+CLINK_EXPORT int ocl_fan_set_fans_info(OCL_Fan *fan, int idx,
+                                       CorsairFanInfo fan_info);
 
 /**
  *  Dump the values of `fan` to stdout
  *
  *  \param fan The fan to dump values for
  */
-void ocl_fan_print_info(CorsairFanInfo fan);
+CLINK_EXPORT void ocl_fan_print_info(CorsairFanInfo fan);
 
 /**
  *  Select a connected fan to perform further operations on
@@ -105,7 +107,7 @@ void ocl_fan_print_info(CorsairFanInfo fan);
  *
  *  \return The index of the newly selected fan
  */
-int ocl_fan_select_fan(OCL_Fan *fan, int idx);
+CLINK_EXPORT int ocl_fan_select_fan(OCL_Fan *fan, int idx);
 
 /**
  *  Get the currently selected fan
@@ -114,7 +116,7 @@ int ocl_fan_select_fan(OCL_Fan *fan, int idx);
  *
  *  \return The index of the currently selected fan
  */
-int ocl_fan_current_fan(OCL_Fan *fan);
+CLINK_EXPORT int ocl_fan_current_fan(OCL_Fan *fan);
 
 /**
  *  Get the number of fans attached to the system
@@ -123,7 +125,7 @@ int ocl_fan_current_fan(OCL_Fan *fan);
  *
  *  \return The number of connected fans
  */
-int ocl_fan_get_fan_count(OCL_Fan *fan);
+CLINK_EXPORT int ocl_fan_get_fan_count(OCL_Fan *fan);
 
 /**
  *  Get the current fan mode, expressed as an integer
@@ -132,7 +134,7 @@ int ocl_fan_get_fan_count(OCL_Fan *fan);
  *
  *  \return The current mode
  */
-int ocl_fan_get_fan_mode(OCL_Fan *fan);
+CLINK_EXPORT int ocl_fan_get_fan_mode(OCL_Fan *fan);
 
 /**
  *  Set the fan mode
@@ -142,7 +144,7 @@ int ocl_fan_get_fan_mode(OCL_Fan *fan);
  *
  *  \return 0 if successful, -1 otherwise
  */
-int ocl_fan_set_fan_mode(OCL_Fan *fan, int mode);
+CLINK_EXPORT int ocl_fan_set_fan_mode(OCL_Fan *fan, int mode);
 
 /**
  *  Get the rpm of the fan
@@ -151,7 +153,7 @@ int ocl_fan_set_fan_mode(OCL_Fan *fan, int mode);
  *
  *  \return the fan rpm
  */
-int ocl_fan_get_fan_rpm(OCL_Fan *fan);
+CLINK_EXPORT int ocl_fan_get_fan_rpm(OCL_Fan *fan);
 
 /**
  *  Set the rpm of the fan
@@ -161,7 +163,7 @@ int ocl_fan_get_fan_rpm(OCL_Fan *fan);
  *
  *  \return 0 if successful, -1 otherwise
  */
-int ocl_fan_set_fan_rpm(OCL_Fan *fan, int rpm);
+CLINK_EXPORT int ocl_fan_set_fan_rpm(OCL_Fan *fan, int rpm);
 
 /**
  *  Get the pwm of the fan
@@ -170,7 +172,7 @@ int ocl_fan_set_fan_rpm(OCL_Fan *fan, int rpm);
  *
  *  \return the fan pwm
  */
-int ocl_fan_get_fan_pwm(OCL_Fan *fan);
+CLINK_EXPORT int ocl_fan_get_fan_pwm(OCL_Fan *fan);
 
 /**
  *  Set the rpm of the fan
@@ -180,7 +182,7 @@ int ocl_fan_get_fan_pwm(OCL_Fan *fan);
  *
  *  \return 0 if successful, -1 otherwise
  */
-int ocl_fan_set_fan_pwm(OCL_Fan *fan, int pwm);
+CLINK_EXPORT int ocl_fan_set_fan_pwm(OCL_Fan *fan, int pwm);
 
 /**
  *  Get the current rpm of fan
@@ -189,7 +191,7 @@ int ocl_fan_set_fan_pwm(OCL_Fan *fan, int pwm);
  *
  *  \return the current rpm
  */
-int ocl_fan_get_current_rpm(OCL_Fan *fan);
+CLINK_EXPORT int ocl_fan_get_current_rpm(OCL_Fan *fan);
 
 /**
  *  Get the max rpm of the fan
@@ -198,7 +200,7 @@ int ocl_fan_get_current_rpm(OCL_Fan *fan);
  *
  *  \return the max rpm
  */
-int ocl_fan_get_max_rpm(OCL_Fan *fan);
+CLINK_EXPORT int ocl_fan_get_max_rpm(OCL_Fan *fan);
 
 /**
  *  Get the fan underspeed threshold
@@ -207,7 +209,7 @@ int ocl_fan_get_max_rpm(OCL_Fan *fan);
  *
  *  \return the fan underspeed threshold
  */
-int ocl_fan_get_fan_underspeed_threshold(OCL_Fan *fan);
+CLINK_EXPORT int ocl_fan_get_fan_underspeed_threshold(OCL_Fan *fan);
 
 /**
  *  Set the fan underspeed threshold
@@ -217,7 +219,7 @@ int ocl_fan_get_fan_underspeed_threshold(OCL_Fan *fan);
  *
  *  \return 0 if successful, -1 otherwise
  */
-int ocl_fan_set_fan_underspeed_threshold(OCL_Fan *fan, int thresh);
+CLINK_EXPORT int ocl_fan_set_fan_underspeed_threshold(OCL_Fan *fan, int thresh);
 
 /**
  *  Get the rpm table for fan
@@ -226,7 +228,7 @@ int ocl_fan_set_fan_underspeed_threshold(OCL_Fan *fan, int thresh);
  *
  *  \return the rpm table
  */
-ocl_fan_rpm_table *ocl_fan_get_rpm_table(OCL_Fan *fan);
+CLINK_EXPORT ocl_fan_rpm_table *ocl_fan_get_rpm_table(OCL_Fan *fan);
 
 /**
  *  Set the rpm table for fan
@@ -236,7 +238,7 @@ ocl_fan_rpm_table *ocl_fan_get_rpm_table(OCL_Fan *fan);
  *
  *  \return 0 if successful, -1 otherwise
  */
-int ocl_fan_set_rpm_table(OCL_Fan *fan, ocl_fan_rpm_table table);
+CLINK_EXPORT int ocl_fan_set_rpm_table(OCL_Fan *fan, ocl_fan_rpm_table table);
 
 /**
  *  Get the temp table for fan
@@ -245,7 +247,7 @@ int ocl_fan_set_rpm_table(OCL_Fan *fan, ocl_fan_rpm_table table);
  *
  *  \return the temp table
  */
-ocl_fan_temp_table *ocl_fan_get_temp_table(OCL_Fan *fan);
+CLINK_EXPORT ocl_fan_temp_table *ocl_fan_get_temp_table(OCL_Fan *fan);
 
 /**
  *  Set the temp table for fan
@@ -255,14 +257,14 @@ ocl_fan_temp_table *ocl_fan_get_temp_table(OCL_Fan *fan);
  *
  *  \return 0 if successful, -1 otherwise
  */
-int ocl_fan_set_temp_table(OCL_Fan *fan, ocl_fan_temp_table table);
+CLINK_EXPORT int ocl_fan_set_temp_table(OCL_Fan *fan, ocl_fan_temp_table table);
 
 /**
  *  Free a fan
  *
  *  \param fan the fan to free from memory
  */
-void ocl_fan_free(OCL_Fan *fan);
+CLINK_EXPORT void ocl_fan_free(OCL_Fan *fan);
 
 /**@}*/
 

@@ -53,7 +53,7 @@ struct ocl_temp_mode {
  *
  *  @return The newly allocated \ref OCL_Led Structure
  */
-OCL_Led *ocl_led_alloc(OCL_Link *link);
+CLINK_EXPORT OCL_Led *ocl_led_alloc(OCL_Link *link);
 
 /**
  *  @brief Select an led on the system
@@ -63,7 +63,7 @@ OCL_Led *ocl_led_alloc(OCL_Link *link);
  *
  *  @return The index of the newly selected led
  */
-int ocl_led_select_led(OCL_Led *led, int idx);
+CLINK_EXPORT int ocl_led_select_led(OCL_Led *led, int idx);
 
 /**
  *  @brief Get the number of LEDs attached to the system
@@ -72,7 +72,7 @@ int ocl_led_select_led(OCL_Led *led, int idx);
  *
  *  @return The number of LEDs attached to the system
  */
-int ocl_led_get_led_count(OCL_Led *led);
+CLINK_EXPORT int ocl_led_get_led_count(OCL_Led *led);
 
 /**
  *  @brief Get the current mode of the LEDs
@@ -81,7 +81,7 @@ int ocl_led_get_led_count(OCL_Led *led);
  *
  *  @return The current LED mode, expressed as an integer
  */
-int ocl_led_get_mode(OCL_Led *led);
+CLINK_EXPORT int ocl_led_get_mode(OCL_Led *led);
 
 /**
  *  @brief Set the LED mode for the system
@@ -91,7 +91,7 @@ int ocl_led_get_mode(OCL_Led *led);
  *
  *  @return The new mode, expressed as an integer
  */
-int ocl_led_set_mode(OCL_Led *led, int mode);
+CLINK_EXPORT int ocl_led_set_mode(OCL_Led *led, int mode);
 
 /**
  *  @brief Copy the current LED Color into `color`
@@ -101,7 +101,7 @@ int ocl_led_set_mode(OCL_Led *led, int mode);
  *
  *  @return 0 if successful, -1 otherwise
  */
-int ocl_led_get_color(OCL_Led *led, struct OCLLedColor *color);
+CLINK_EXPORT int ocl_led_get_color(OCL_Led *led, struct OCLLedColor *color);
 
 /**
  *  @brief Same as \ref ocl_led_get_color, but returns the color instead of
@@ -111,7 +111,7 @@ int ocl_led_get_color(OCL_Led *led, struct OCLLedColor *color);
  *
  *  @return The \ref OCLLedColor structure
  */
-struct OCLLedColor *ocl_led_get_color2(OCL_Led *led);
+CLINK_EXPORT struct OCLLedColor *ocl_led_get_color2(OCL_Led *led);
 
 /**
  *  @brief Get the led colors associated with the current temperature register
@@ -121,7 +121,8 @@ struct OCLLedColor *ocl_led_get_color2(OCL_Led *led);
  *
  *  @return 0 if successful, -1 otherwise
  */
-int ocl_led_get_temp_color(OCL_Led *led, struct OCLLedColor *color);
+CLINK_EXPORT int ocl_led_get_temp_color(OCL_Led *led,
+                                        struct OCLLedColor *color);
 
 /**
  *  @brief Set the led colors associated with the current temperature register
@@ -131,7 +132,8 @@ int ocl_led_get_temp_color(OCL_Led *led, struct OCLLedColor *color);
  *
  *  @return 0 if successful, -1 otherwise
  */
-int ocl_led_set_temp_color(OCL_Led *led, struct OCLLedColor *color);
+CLINK_EXPORT int ocl_led_set_temp_color(OCL_Led *led,
+                                        struct OCLLedColor *color);
 
 /**
  *  @brief Get the temperature table for the current temp mode
@@ -140,7 +142,7 @@ int ocl_led_set_temp_color(OCL_Led *led, struct OCLLedColor *color);
  *
  *  @return The table of temperatures associated with the current temp mode
  */
-struct ocl_temp_mode *ocl_led_get_temp_mode_temp(OCL_Led *led);
+CLINK_EXPORT struct ocl_temp_mode *ocl_led_get_temp_mode_temp(OCL_Led *led);
 
 /**
  *  @brief Set the temperature table for the current mode
@@ -150,7 +152,8 @@ struct ocl_temp_mode *ocl_led_get_temp_mode_temp(OCL_Led *led);
  *
  *  @return 0 if successful, -1 otherwise
  */
-int ocl_led_set_temp_mode_temp(OCL_Led *led, struct ocl_temp_mode mode);
+CLINK_EXPORT int ocl_led_set_temp_mode_temp(OCL_Led *led,
+                                            struct ocl_temp_mode mode);
 
 /**
  *  @brief Copy the color associated with the current temp mode into `color`
@@ -160,7 +163,8 @@ int ocl_led_set_temp_mode_temp(OCL_Led *led, struct ocl_temp_mode mode);
  *
  *  @return 0 if successful, -1 otherwise
  */
-int ocl_led_get_temp_mode_color(OCL_Led *led, struct OCLLedColor *color);
+CLINK_EXPORT int ocl_led_get_temp_mode_color(OCL_Led *led,
+                                             struct OCLLedColor *color);
 
 /**
  *  @brief Set the color associated with the current temp mode using the values
@@ -171,7 +175,8 @@ int ocl_led_get_temp_mode_color(OCL_Led *led, struct OCLLedColor *color);
  *
  *  @return 0 if successful, -1 otherwise
  */
-int ocl_led_set_temp_mode_color(OCL_Led *led, struct OCLLedColor *color);
+CLINK_EXPORT int ocl_led_set_temp_mode_color(OCL_Led *led,
+                                             struct OCLLedColor *color);
 
 /**
  *  @brief Get the LED cycle colors of the system
@@ -181,7 +186,8 @@ int ocl_led_set_temp_mode_color(OCL_Led *led, struct OCLLedColor *color);
  *
  *  @return 0 if successful, -1 otherwise
  */
-int ocl_led_get_cycle_colors(OCL_Led *led, struct OCLLedColor *color);
+CLINK_EXPORT int ocl_led_get_cycle_colors(OCL_Led *led,
+                                          struct OCLLedColor *color);
 
 /**
  *  @brief Set the LED cycle colors using the values in `color`
@@ -191,7 +197,8 @@ int ocl_led_get_cycle_colors(OCL_Led *led, struct OCLLedColor *color);
  *
  *  @return 0 if successful, -1 otherwise
  */
-int ocl_led_set_cycle_colors(OCL_Led *led, struct OCLLedColor *color);
+CLINK_EXPORT int ocl_led_set_cycle_colors(OCL_Led *led,
+                                          struct OCLLedColor *color);
 
 /**
  *  @brief Free an \ref OCL_Led structure while preserving the associated \ref
@@ -199,7 +206,7 @@ int ocl_led_set_cycle_colors(OCL_Led *led, struct OCLLedColor *color);
  *
  *  @param led The \ref OCL_Led structure to free
  */
-void ocl_led_free(OCL_Led *led);
+CLINK_EXPORT void ocl_led_free(OCL_Led *led);
 
 /**@}*/
 

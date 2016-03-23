@@ -75,7 +75,7 @@ int ocl_temp_get_temp_sensors(OCL_Temp *temp)
     return link->buf[2];
 }
 
-int ocl_temp_get_temp(OCL_Temp *temp)
+float ocl_temp_get_temp(OCL_Temp *temp)
 {
     OCL_Link *link = temp->link;
 
@@ -93,7 +93,7 @@ int ocl_temp_get_temp(OCL_Temp *temp)
     int temperature = link->buf[3] << 8;
     temperature += link->buf[2];
 
-    return temperature;
+    return (float)temperature / 256;
 }
 
 int ocl_temp_get_temp_limit(OCL_Temp *temp)

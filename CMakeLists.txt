@@ -1,19 +1,45 @@
-cmake_minimum_required(VERSION 2.8)
-project(OpenCorsairLink)
+# CMake build script for OpenCorsairLink
+#
+# Building (out of source tree):
+# > mkdir build && cd build
+# > cmake .. [-DSETTINGS=VALUE]
+# > cmake --build .
+#
+# Testing:
+# > ctest -V
+#
+# Install:
+# > cmake --build . --target install
 
-set(VERSION_MAJOR 0 CACHE INTERNAL "Project major version.")
-set(VERSION_MINOR 2 CACHE INTERNAL "Project minor version.")
-set(VERSION_TEENY 0 CACHE INTERNAL "Project teeny version.")
+cmake_minimum_required(VERSION 3.0)
+project(clink VERSION 0.2.0)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
 include(MacroEnsureOutOfSourceBuild)
 macro_ensure_out_of_source_build("building in the source tree is not allowed.")
 
+# Build options
+#
+option(BUILD_SHARED_LIBS "Build Shared Library (OFF for static)" ON)
+option(TAGS "Generate tags" OFF)
+option(PROFILE "Generate profiling information" OFF)
+option(VALGRIND "Configure build for valgrind" OFF)
+option(BUILD_DOCUMENTATION "Build the doxygen documentation" ON)
+option(OCL_TESTS "Build all test targets and enable testing" ON)
+
+set(PROJECT_NAME "clink")
+
+set(PROJECT_VERSION_MAJOR 0 CACHE INTERNAL "Project major version.")
+set(PROJECT_VERSION_MINOR 2 CACHE INTERNAL "Project minor version.")
+set(PROJECT_VERSION_PATCH 0 CACHE INTERNAL "Project teeny version.")
+set(PROJECT_VERSION
+    ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Debug)
-    set(BUILD_DOCUMENTATION ON)
+    set(CMAKE_BUILD_TYPE "Debug")
 endif()
 
 set(OCL_WARNING_FLAGS "-Wall -Wextra -Wno-gnu-zero-variadic-macro-arguments")
@@ -31,30 +57,54 @@ if(APPLE)
     set(CMAKE_MACOSX_RPATH ON)
 endif(APPLE)
 
-if(WIN32)
-    set(CLINK_SLEEP_MACRO "Sleep(ms)")
-else()
-    set(CLINK_SLEEP_MACRO "usleep(ms * 1000)")
-endif(WIN32)
-
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/clink/src/config.h.in
-    ${CMAKE_CURRENT_BINARY_DIR}/config.h
-    @ONLY)
-
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
 set(OCL_UTILS_DIR ${CMAKE_CURRENT_LIST_DIR}/debug)
 set(OCL_SCRIPT_DIR ${CMAKE_CURRENT_LIST_DIR}/script)
-option(OCL_TESTS "Build all test targets and enable testing" ON)
-
-option(BUILD_SHARED_LIBS "build shared libraries" OFF)
 set(HIDAPI_PREFIX "/usr/local" CACHE PATH "prefix where hidapi is installed")
 
-include_directories("${CMAKE_CURRENT_LIST_DIR}/debug")
-add_subdirectory(debug)
+include_directories(${CMAKE_CURRENT_BINARY_DIR} src)
+add_subdirectory(src)
 
-include_directories("${CMAKE_CURRENT_LIST_DIR}/clink" "${CMAKE_CURRENT_LIST_DIR}/oclink")
+if(OCL_TESTS)
+    include_directories(test)
+    add_subdirectory(test)
+    enable_testing()
+endif(OCL_TESTS)
 
-add_subdirectory(clink)
-add_subdirectory(oclink)
-add_subdirectory(doc)
+if(TAGS)
+    find_program(CTAGS ctags)
+    if(NOT CTAGS)
+        message(FATAL_ERROR "Could not find ctags command")
+    endif(NOT CTAGS)
+
+    file(GLOB_RECURSE SRC_ALL *.[ch])
+
+    add_custom_command(
+        OUTPUT tags
+        COMMAND ${CTAGS} -a ${SRC_ALL}
+        DEPENDS ${SRC_ALL}
+    )
+
+    add_custom_target(
+        do_tags ALL
+        DEPENDS tags
+    )
+endif(TAGS)
+
+if(BUILD_DOCUMENTATION)
+    add_subdirectory(doc)
+endif(BUILD_DOCUMENTATION)
+
+include(JMLMessage)
+jml_separator()
+jml_message(BoldYellow "Configuration Summary:")
+message(STATUS "${BoldBlue}Project${ColorReset} ${Cyan}${PROJECT_NAME}${ColorReset} ${BoldBlue}Version${ColorReset} ${Cyan}${PROJECT_VERSION}${ColorReset}")
+jml_config_summary_message(CMAKE_BUILD_TYPE)
+jml_config_summary_message(CMAKE_INSTALL_PREFIX)
+jml_config_summary_message(BUILD_SHARED_LIBS)
+jml_config_summary_message(TAGS)
+jml_config_summary_message(PROFILE)
+jml_config_summary_message(VALGRIND)
+jml_config_summary_message(BUILD_DOCUMENTATION)
+jml_config_summary_message(OCL_TESTS)
+jml_config_summary_message(LIB_INSTALL_DIR)
+jml_separator()

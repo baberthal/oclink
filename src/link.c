@@ -191,7 +191,7 @@ int ocl_link_get_device_id(OCL_Link *link)
     int res = hid_write(link->handle, link->buf, 17);
     jml_check(res >= 0, "Unable to write -- %ls", hid_error(link->handle));
     hid_read_wrapper(link->handle, link->buf);
-    jml_check(res >= 0, "Unable to read -- %s", hid_error(link->handle));
+    jml_check(res >= 0, "Unable to read -- %ls", hid_error(link->handle));
 
     return link->buf[2];
 }
@@ -210,7 +210,7 @@ int ocl_link_get_fw_version(OCL_Link *link)
     jml_check(res >= 0, "Unable to write -- %ls", hid_error(link->handle));
 
     hid_read_wrapper(link->handle, link->buf);
-    jml_check(res >= 0, "Unable to read -- %s", hid_error(link->handle));
+    jml_check(res >= 0, "Unable to read -- %ls", hid_error(link->handle));
 
     int firmware = link->buf[3] << 8;
     firmware += link->buf[2];
@@ -232,7 +232,7 @@ int ocl_link_get_product_name(OCL_Link *link, char *out_name)
     jml_check(res >= 0, "Unable to write -- %ls", hid_error(link->handle));
 
     hid_read_wrapper(link->handle, link->buf);
-    jml_check(res >= 0, "Unable to read -- %s", hid_error(link->handle));
+    jml_check(res >= 0, "Unable to read -- %ls", hid_error(link->handle));
 
     memcpy(out_name, link->buf + 3, 8);
     return 0;
@@ -252,7 +252,7 @@ int ocl_link_get_device_status(OCL_Link *link)
     jml_check(res >= 0, "Unable to write -- %ls", hid_error(link->handle));
 
     hid_read_wrapper(link->handle, link->buf);
-    jml_check(res >= 0, "Unable to read -- %s", hid_error(link->handle));
+    jml_check(res >= 0, "Unable to read -- %ls", hid_error(link->handle));
 
     return link->buf[2];
 }
