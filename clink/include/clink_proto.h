@@ -15,9 +15,11 @@
 enum CorsairLinkCommands {
     /*
      * R - 1 byte
-     * (H80 0x37, Cooling node 0x38, Lighting node 0x39, H100 0x3A, 80i 0x3B, 100i
+     * (H80 0x37, Cooling node 0x38, Lighting node 0x39, H100 0x3A, 80i 0x3B,
+     * 100i
      * 0x3c --
-     * this field as well as the version are common on all C-Link devices; but the
+     * this field as well as the version are common on all C-Link devices; but
+     * the
      * rest aren't
      * */
     DeviceID = 0x00,
@@ -55,7 +57,8 @@ enum CorsairLinkCommands {
 
     /*
      * RW - 1 byte
-     * LED mode - 0x00 for static color, 0x40 for 2-color cycle, 0x80 for 4-color,
+     * LED mode - 0x00 for static color, 0x40 for 2-color cycle, 0x80 for
+     * 4-color,
      * 0xC0 for temperature mode;
      * low nibble defines cycle speed or the temperature channel to use (0
      * internal sensor, 7 manual)
@@ -77,21 +80,24 @@ enum CorsairLinkCommands {
 
     /*
      * RW - 6 bytes
-     * LED temperature-mode temperatures: 3 temperatures; used when cycle mode is
+     * LED temperature-mode temperatures: 3 temperatures; used when cycle mode
+     * is
      * 0xc0
      * */
     LED_TemperatureMode = 0x09,
 
     /*
      * RW - 9 bytes
-     * LED temperature-mode colors: RGBx3 colors, corresponding to temperatures in
+     * LED temperature-mode colors: RGBx3 colors, corresponding to temperatures
+     * in
      * register above
      * */
     LED_TemperatureModeColors = 0x0A,
 
     /*
      * RW - 12 bytes
-     * LED cycle colors: RGBx4 colors (only first color used if cycle mode set to
+     * LED cycle colors: RGBx4 colors (only first color used if cycle mode set
+     * to
      * 00, first two if 4b, ignored if c0)
      * */
     LED_CycleColors = 0x0B,
@@ -239,5 +245,10 @@ enum CorsairFanModes {
     Performance = 0x0C,
     Custom = 0x0E
 };
+
+typedef enum CorsairLinkCommands CorsairLink_Command;
+typedef enum _CorsairLinkOpCodes CorsairLink_OpCode;
+typedef enum CorsairLedModes CorsairLink_LEDMode;
+typedef enum CorsairFanModes CorsairLink_FanMode;
 
 #endif /* clink_proto_h */

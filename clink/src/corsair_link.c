@@ -10,6 +10,7 @@
 #include "clink_proto.h"
 #include "jml_debug.h"
 #include <dispatch/dispatch.h>
+#include <stdarg.h>
 #include <string.h>
 
 #define SLEEP(ms)                                                              \
@@ -148,6 +149,34 @@ void ocl_link_free(OCL_Link *link)
     }
 
     free(link);
+}
+
+static inline void ocl_reset_buf(OCL_Link *link)
+{
+    memset(link->buf, 0x00, sizeof(link->buf));
+}
+
+int ocl_link_build_command(OCL_Link *link, int command_len,
+                           CorsairLink_OpCode op_code,
+                           CorsairLink_Command command, ...)
+{
+    // TODO: Implement
+    int i = 0;
+    int rc = 0;
+
+    ocl_reset_buf(link);
+    link->buf[0] = command_len;
+    link->buf[1] = link->command_id++;
+    link->buf[2] = op_code;
+    link->buf[3] = command;
+
+    va_list argp;
+    va_start(argp, command);
+    for (i = 4; i < command_len; i++) {
+        link->buf[i] = va_arg(argp, int);
+    }
+
+    return rc;
 }
 
 int ocl_link_get_device_id(OCL_Link *link)
