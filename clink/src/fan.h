@@ -9,7 +9,7 @@
 #ifndef clink_fan_h
 #define clink_fan_h
 
-#include "corsair_link.h"
+#include "link.h"
 
 /** \file clink_fan.h
  *  @defgroup Fan clink Fan
@@ -23,9 +23,9 @@
  *  \brief Holds information relative to a specific fan in the system.
  */
 typedef struct ocl_fan_info {
-    char *name; ///< The name of the fan
-    int rpm;    ///< The fan's rpm
-    int mode;   ///< The fan's mode
+    char *name;  ///< The name of the fan
+    int rpm;     ///< The fan's rpm
+    int mode;    ///< The fan's mode
 } CorsairFanInfo;
 
 /**
@@ -35,19 +35,19 @@ typedef struct ocl_fan {
     /// A list (or array, if you will) of `CorsairFanInfo` structures attached
     /// to the system
     CorsairFanInfo fan_info[32];
-    int fan_count;  ///< The number of fans attached to the system
-    OCL_Link *link; ///< The associated link structure
+    int fan_count;   ///< The number of fans attached to the system
+    OCL_Link *link;  ///< The associated link structure
 } OCL_Fan;
 
 /**
  *  \brief A table to hold various rpms and temperatures for the fans.
  */
 struct ocl_fan_table {
-    int one;   ///< Fan 1
-    int two;   ///< Fan 2
-    int three; ///< Fan 3
-    int four;  ///< Fan 4
-    int five;  ///< Fan 5
+    int one;    ///< Fan 1
+    int two;    ///< Fan 2
+    int three;  ///< Fan 3
+    int four;   ///< Fan 4
+    int five;   ///< Fan 5
 };
 
 /**

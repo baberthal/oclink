@@ -6,12 +6,12 @@
 //  Copyright © 2016 J. Morgan Lieberthal. All rights reserved.
 //
 
-#include "clink_led.h"
-#include "clink_proto.h"
-#include "jml_debug.h"
+#include "led.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "jml_debug.h"
+#include "proto.h"
 
 OCL_Led *ocl_led_alloc(OCL_Link *link)
 {

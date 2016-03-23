@@ -6,26 +6,26 @@
 //  Copyright © 2016 J. Morgan Lieberthal. All rights reserved.
 //
 
-#include "corsair_link.h"
-#include "clink_proto.h"
-#include "jml_debug.h"
+#include "link.h"
 #include <dispatch/dispatch.h>
 #include <stdarg.h>
 #include <string.h>
+#include "jml_debug.h"
+#include "proto.h"
 
-#define SLEEP(ms)                                                              \
-    do {                                                                       \
-        usleep(ms * 1000);                                                     \
-        sleep_total += ms;                                                     \
+#define SLEEP(ms)          \
+    do {                   \
+        usleep(ms * 1000); \
+        sleep_total += ms; \
     } while (0)
 
 #if DEBUG
-#define DEBUG_HID_READ(buf)                                                    \
-    do {                                                                       \
-        for (int z = 0; z < sizeof((buf)); z++) {                              \
-            fprintf(stdout, "[DEBUG] - %s [%s:%d] %02X\n",                     \
-                    __PRETTY_FUNCTION__, __FILENAME__, __LINE__, (buf)[z]);    \
-        }                                                                      \
+#define DEBUG_HID_READ(buf)                                                  \
+    do {                                                                     \
+        for (size_t _z = 0; _z < sizeof((buf)); _z++) {                      \
+            fprintf(stdout, "[DEBUG] - %s [%s:%d] %02X\n",                   \
+                    __PRETTY_FUNCTION__, __FILENAME__, __LINE__, (buf)[_z]); \
+        }                                                                    \
     } while (0)
 #else
 #define DEBUG_HID_READ(buf)
@@ -40,8 +40,7 @@ static int hid_read_wrapper(hid_device *handle, cl_buf_t *buf)
     int res = 0, sleep_total = 0;
     while (res == 0 && sleep_total < max_read_wait) {
         res = hid_read(handle, buf, sizeof(buf));
-        if (res < 0)
-            fprintf(stderr, "Unable to read from device.\n");
+        if (res < 0) fprintf(stderr, "Unable to read from device.\n");
 
         SLEEP(100);
     }
@@ -90,13 +89,13 @@ int ocl_link_init(OCL_Link *link)
         return -1;
     }
 
-    if (hid_init() == -1)
-        return -1;
+    if (hid_init() == -1) return -1;
 
     link->handle = hid_open(CorsairVendorID, CorsairProductID, NULL);
     if (!link->handle) {
-        fprintf(stderr, "[ERROR] - Unable to open Corsair H80i, H100i or H110i "
-                        "CPU Cooler.\n");
+        fprintf(stderr,
+                "[ERROR] - Unable to open Corsair H80i, H100i or H110i "
+                "CPU Cooler.\n");
         return -1;
     }
     hid_set_nonblocking(link->handle, 1);
@@ -113,15 +112,15 @@ int ocl_link_init(OCL_Link *link)
     return 0;
 }
 
-OCL_Link *const ocl_link_shared_link(void)
+OCL_Link *ocl_link_shared_link(void)
 {
     static OCL_Link *sharedLink = NULL;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        sharedLink = ocl_link_alloc();
-        if (sharedLink) {
-            ocl_link_init(sharedLink);
-        }
+      sharedLink = ocl_link_alloc();
+      if (sharedLink) {
+          ocl_link_init(sharedLink);
+      }
     });
 
     return sharedLink;
@@ -183,7 +182,7 @@ int ocl_link_get_device_id(OCL_Link *link)
 {
     memset(link->buf, 0, sizeof(link->buf));
 
-    link->buf[0] = 0x03; // Length
+    link->buf[0] = 0x03;  // Length
     link->buf[1] = link->command_id++;
     link->buf[2] = ReadOneByte;
     link->buf[3] = DeviceID;
@@ -201,7 +200,7 @@ int ocl_link_get_fw_version(OCL_Link *link)
 {
     memset(link->buf, 0, sizeof(link->buf));
 
-    link->buf[0] = 0x03; // Length
+    link->buf[0] = 0x03;  // Length
     link->buf[1] = link->command_id++;
     link->buf[2] = ReadTwoBytes;
     link->buf[3] = FirmwareID;
@@ -223,7 +222,7 @@ int ocl_link_get_product_name(OCL_Link *link, char *out_name)
 {
     memset(link->buf, 0, sizeof(link->buf));
 
-    link->buf[0] = 0x03; // Length
+    link->buf[0] = 0x03;  // Length
     link->buf[1] = link->command_id++;
     link->buf[2] = ReadThreeBytes;
     link->buf[3] = ProductName;
@@ -243,7 +242,7 @@ int ocl_link_get_device_status(OCL_Link *link)
 {
     memset(link->buf, 0, sizeof(link->buf));
 
-    link->buf[0] = 0x03; // Length
+    link->buf[0] = 0x03;  // Length
     link->buf[1] = link->command_id++;
     link->buf[2] = ReadOneByte;
     link->buf[3] = Status;

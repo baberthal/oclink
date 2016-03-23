@@ -14,15 +14,15 @@
  *  @{
  */
 
-#include "corsair_link.h"
+#include "link.h"
 
 /**
  *  @brief A structure to hold references to the \ref OCL_Link and selected
  *   sensor
  */
 typedef struct ocl_temp {
-    OCL_Link *link;      ///< The associated \ref OCL_Link structure
-    int selected_sensor; ///< The currently selected sensor (cached)
+    OCL_Link *link;       ///< The associated \ref OCL_Link structure
+    int selected_sensor;  ///< The currently selected sensor (cached)
 } OCL_Temp;
 
 /**

@@ -6,12 +6,12 @@
 //  Copyright © 2016 J. Morgan Lieberthal. All rights reserved.
 //
 
-#include "clink_temp.h"
-#include "clink_proto.h"
-#include "jml_debug.h"
+#include "temp.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "jml_debug.h"
+#include "proto.h"
 
 OCL_Temp *ocl_temp_alloc(OCL_Link *link)
 {
@@ -139,13 +139,11 @@ int ocl_temp_set_temp_limit(OCL_Temp *temp, int limit)
 
     int res = hid_write(link->handle, link->buf, 11);
     jml_check(res >= 0, "Unable to write -- %ls", hid_error(link->handle));
-    if (res < 0)
-        return -1;
+    if (res < 0) return -1;
 
     res = link->hid_read_wrapper(link->handle, link->buf);
     jml_check(res >= 0, "Unable to read -- %ls", hid_error(link->handle));
-    if (res < 0)
-        return -1;
+    if (res < 0) return -1;
 
     return 0;
 }

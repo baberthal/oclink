@@ -6,12 +6,12 @@
 //  Copyright © 2016 J. Morgan Lieberthal. All rights reserved.
 //
 
-#include "clink_fan.h"
-#include "clink_proto.h"
-#include "jml_debug.h"
+#include "fan.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "jml_debug.h"
+#include "proto.h"
 
 OCL_Fan *ocl_fan_alloc(OCL_Link *link)
 {
@@ -325,31 +325,31 @@ static char *ocl_fan_get_fan_mode_string(int mode)
 {
     char *mode_string = NULL;
     switch (mode) {
-    case FixedPWM:
-        asprintf(&mode_string, "Fixex PWM");
-        break;
-    case FixedRPM:
-        asprintf(&mode_string, "Fixed RPM");
-        break;
-    case Default:
-        asprintf(&mode_string, "Default");
-        break;
-    case Quiet:
-        asprintf(&mode_string, "Quiet");
-        break;
-    case Balanced:
-        asprintf(&mode_string, "Balanced");
-        break;
-    case Performance:
-        asprintf(&mode_string, "Performance");
-        break;
-    case Custom:
-        asprintf(&mode_string, "Custom");
-        break;
+        case FixedPWM:
+            asprintf(&mode_string, "Fixex PWM");
+            break;
+        case FixedRPM:
+            asprintf(&mode_string, "Fixed RPM");
+            break;
+        case Default:
+            asprintf(&mode_string, "Default");
+            break;
+        case Quiet:
+            asprintf(&mode_string, "Quiet");
+            break;
+        case Balanced:
+            asprintf(&mode_string, "Balanced");
+            break;
+        case Performance:
+            asprintf(&mode_string, "Performance");
+            break;
+        case Custom:
+            asprintf(&mode_string, "Custom");
+            break;
 
-    default:
-        asprintf(&mode_string, "N/A (%02X)", mode);
-        break;
+        default:
+            asprintf(&mode_string, "N/A (%02X)", mode);
+            break;
     }
 
     return mode_string;
@@ -370,14 +370,14 @@ int ocl_fan_connected_fans(OCL_Fan *fan)
     for (i = 0; i < 5; i++) {
         memset(cl->buf, 0x00, sizeof(cl->buf));
         // Read fan Mode
-        cl->buf[0] = 0x07;             // Length
-        cl->buf[1] = cl->command_id++; // Command ID
-        cl->buf[2] = WriteOneByte;     // Command Opcode
-        cl->buf[3] = FAN_Select;       // Command data...
-        cl->buf[4] = i;                // select fan
-        cl->buf[5] = cl->command_id++; // Command ID
-        cl->buf[6] = ReadOneByte;      // Command Opcode
-        cl->buf[7] = FAN_Mode;         // Command data...
+        cl->buf[0] = 0x07;              // Length
+        cl->buf[1] = cl->command_id++;  // Command ID
+        cl->buf[2] = WriteOneByte;      // Command Opcode
+        cl->buf[3] = FAN_Select;        // Command data...
+        cl->buf[4] = i;                 // select fan
+        cl->buf[5] = cl->command_id++;  // Command ID
+        cl->buf[6] = ReadOneByte;       // Command Opcode
+        cl->buf[7] = FAN_Mode;          // Command data...
 
         int res = hid_write(cl->handle, cl->buf, 11);
         jml_check(res >= 0, "Unable to write -- %s", hid_error(cl->handle));
@@ -407,14 +407,14 @@ void ocl_fan_read_fans_info(OCL_Fan *fan, int idx, CorsairFanInfo *fan_info)
 
     memset(cl->buf, 0x00, sizeof(cl->buf));
     // Read fan Mode
-    cl->buf[0] = 0x07;             // Length
-    cl->buf[1] = cl->command_id++; // Command ID
-    cl->buf[2] = WriteOneByte;     // Command Opcode
-    cl->buf[3] = FAN_Select;       // Command data...
-    cl->buf[4] = idx;              // select fan
-    cl->buf[5] = cl->command_id++; // Command ID
-    cl->buf[6] = ReadOneByte;      // Command Opcode
-    cl->buf[7] = FAN_Mode;         // Command data...
+    cl->buf[0] = 0x07;              // Length
+    cl->buf[1] = cl->command_id++;  // Command ID
+    cl->buf[2] = WriteOneByte;      // Command Opcode
+    cl->buf[3] = FAN_Select;        // Command data...
+    cl->buf[4] = idx;               // select fan
+    cl->buf[5] = cl->command_id++;  // Command ID
+    cl->buf[6] = ReadOneByte;       // Command Opcode
+    cl->buf[7] = FAN_Mode;          // Command data...
 
     res = hid_write(cl->handle, cl->buf, 11);
     if (res < 0) {
@@ -431,14 +431,14 @@ void ocl_fan_read_fans_info(OCL_Fan *fan, int idx, CorsairFanInfo *fan_info)
 
     memset(cl->buf, 0x00, sizeof(cl->buf));
     // Read fan RPM
-    cl->buf[0] = 0x07;             // Length
-    cl->buf[1] = cl->command_id++; // Command ID
-    cl->buf[2] = WriteOneByte;     // Command Opcode
-    cl->buf[3] = FAN_Select;       // Command data...
-    cl->buf[4] = idx;              // select fan
-    cl->buf[5] = cl->command_id++; // Command ID
-    cl->buf[6] = ReadTwoBytes;     // Command Opcode
-    cl->buf[7] = FAN_ReadRPM;      // Command data...
+    cl->buf[0] = 0x07;              // Length
+    cl->buf[1] = cl->command_id++;  // Command ID
+    cl->buf[2] = WriteOneByte;      // Command Opcode
+    cl->buf[3] = FAN_Select;        // Command data...
+    cl->buf[4] = idx;               // select fan
+    cl->buf[5] = cl->command_id++;  // Command ID
+    cl->buf[6] = ReadTwoBytes;      // Command Opcode
+    cl->buf[7] = FAN_ReadRPM;       // Command data...
 
     res = hid_write(cl->handle, cl->buf, 11);
     if (res < 0) {
@@ -463,18 +463,18 @@ int ocl_fan_set_fans_info(OCL_Fan *fan, int idx, CorsairFanInfo fan_info)
         fan_info.mode == Default || fan_info.mode == Quiet ||
         fan_info.mode == Balanced || fan_info.mode == Performance ||
         fan_info.mode == Custom) {
-        cl->buf[0] = 0x0b;             // Length
-        cl->buf[1] = cl->command_id++; // Command ID
-        cl->buf[2] = WriteOneByte;     // Command Opcode
-        cl->buf[3] = FAN_Select;       // Command data...
-        cl->buf[4] = idx;              // select fan
-        cl->buf[5] = cl->command_id++; // Command ID
-        cl->buf[6] = WriteOneByte;     // Command Opcode
-        cl->buf[7] = FAN_Mode;         // Command data...
+        cl->buf[0] = 0x0b;              // Length
+        cl->buf[1] = cl->command_id++;  // Command ID
+        cl->buf[2] = WriteOneByte;      // Command Opcode
+        cl->buf[3] = FAN_Select;        // Command data...
+        cl->buf[4] = idx;               // select fan
+        cl->buf[5] = cl->command_id++;  // Command ID
+        cl->buf[6] = WriteOneByte;      // Command Opcode
+        cl->buf[7] = FAN_Mode;          // Command data...
         cl->buf[8] = fan_info.mode;
-        cl->buf[9] = cl->command_id++; // Command ID
-        cl->buf[10] = ReadOneByte;     // Command Opcode
-        cl->buf[11] = FAN_Mode;        // Command data...
+        cl->buf[9] = cl->command_id++;  // Command ID
+        cl->buf[10] = ReadOneByte;      // Command Opcode
+        cl->buf[11] = FAN_Mode;         // Command data...
 
         int res = hid_write(cl->handle, cl->buf, 17);
         if (res < 0) {
@@ -499,19 +499,19 @@ int ocl_fan_set_fans_info(OCL_Fan *fan, int idx, CorsairFanInfo fan_info)
     if (fan_info.rpm != 0) {
         memset(cl->buf, 0x00, sizeof(cl->buf));
 
-        cl->buf[0] = 0x0b;             // Length
-        cl->buf[1] = cl->command_id++; // Command ID
-        cl->buf[2] = WriteOneByte;     // Command Opcode
-        cl->buf[3] = FAN_Select;       // Command data...
-        cl->buf[4] = idx;              // select fan
-        cl->buf[5] = cl->command_id++; // Command ID
-        cl->buf[6] = WriteTwoBytes;    // Command Opcode
-        cl->buf[7] = FAN_FixedRPM;     // Command data...
+        cl->buf[0] = 0x0b;              // Length
+        cl->buf[1] = cl->command_id++;  // Command ID
+        cl->buf[2] = WriteOneByte;      // Command Opcode
+        cl->buf[3] = FAN_Select;        // Command data...
+        cl->buf[4] = idx;               // select fan
+        cl->buf[5] = cl->command_id++;  // Command ID
+        cl->buf[6] = WriteTwoBytes;     // Command Opcode
+        cl->buf[7] = FAN_FixedRPM;      // Command data...
         cl->buf[8] = fan_info.rpm & 0x00FF;
         cl->buf[9] = fan_info.rpm >> 8;
-        cl->buf[10] = cl->command_id++; // Command ID
-        cl->buf[11] = ReadTwoBytes;     // Command Opcode
-        cl->buf[12] = FAN_ReadRPM;      // Command data...
+        cl->buf[10] = cl->command_id++;  // Command ID
+        cl->buf[11] = ReadTwoBytes;      // Command Opcode
+        cl->buf[12] = FAN_ReadRPM;       // Command data...
 
         int res = hid_write(cl->handle, cl->buf, 18);
         if (res < 0) {

@@ -1,6 +1,0 @@
-#ifndef OCLINK_TUI_CONFIG_H
-#define OCLINK_TUI_CONFIG_H 1
-
-#include <@CURSES_INCLUDE_DIRECTIVE@>
-
-#endif /* ifndef OCLINK_TUI_CONFIG_H */

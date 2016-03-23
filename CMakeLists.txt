@@ -12,9 +12,20 @@ include(MacroEnsureOutOfSourceBuild)
 macro_ensure_out_of_source_build("building in the source tree is not allowed.")
 
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE DEBUG)
+    set(CMAKE_BUILD_TYPE Debug)
     set(BUILD_DOCUMENTATION ON)
 endif()
+
+set(OCL_WARNING_FLAGS "-Wall -Wextra -Wno-gnu-zero-variadic-macro-arguments")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pedantic -std=c99 ${OCL_WARNING_FLAGS}")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -ggdb -O1")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -pg -O2")
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_definitions(-DDEBUG)
+else(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_definitions(-DNDEBUG)
+endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 if(APPLE)
     set(CMAKE_MACOSX_RPATH ON)
@@ -46,5 +57,4 @@ include_directories("${CMAKE_CURRENT_LIST_DIR}/clink" "${CMAKE_CURRENT_LIST_DIR}
 
 add_subdirectory(clink)
 add_subdirectory(oclink)
-add_subdirectory(tui)
 add_subdirectory(doc)

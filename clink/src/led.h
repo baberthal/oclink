@@ -14,16 +14,16 @@
 #ifndef clink_led_h
 #define clink_led_h
 
-#include "corsair_link.h"
+#include "link.h"
 
 /**
  *  @brief Represent's an RGB Color
  *  @struct OCLLedColor
  */
 struct OCLLedColor {
-    int red;   ///< The Color's Red Component
-    int green; ///< The Color's Green Component
-    int blue;  ///< The Color's Blue Component
+    int red;    ///< The Color's Red Component
+    int green;  ///< The Color's Green Component
+    int blue;   ///< The Color's Blue Component
 };
 
 /**
@@ -42,16 +42,16 @@ typedef struct ocl_led {
         int opts;
         int func;
     } color_set_by;
-    OCL_Link *link; ///< The associated \ref OCL_Link structure
+    OCL_Link *link;  ///< The associated \ref OCL_Link structure
 } OCL_Led;
 
 /**
  *  @brief Holds temperature settings for temperature modes
  */
 struct ocl_temp_mode {
-    int temp_1; ///< The First Temperature
-    int temp_2; ///< The Second Temperature
-    int temp_3; ///< The Third Temperature
+    int temp_1;  ///< The First Temperature
+    int temp_2;  ///< The Second Temperature
+    int temp_3;  ///< The Third Temperature
 };
 
 /**

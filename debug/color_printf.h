@@ -18,7 +18,8 @@ enum _JMLColors {
 typedef enum _JMLColors Color;
 
 int color_printf(Color color, const char *__restrict fmt, ...);
-int color_fprintf(FILE *__restrict file, Color color, const char *__restrict fmt, ...);
+int color_fprintf(FILE *__restrict file, Color color,
+                  const char *__restrict fmt, ...);
 
 #define LogRed(...) color_printf(Red, __VA_ARGS__)
 
