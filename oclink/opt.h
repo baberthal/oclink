@@ -12,6 +12,13 @@
 #include <clink_led.h>
 #include <stdio.h>
 
+/**
+ *  @brief A struct to hold an option
+ */
+typedef struct OCLOption {
+    const char *name; ///< The name of the option
+} OCLOption;
+
 struct OCL_Options {
     int info_flag;
     int help_flag;
@@ -30,7 +37,7 @@ struct OCL_Options {
     int temp_number;
 };
 
-int parse_args(int argc, const char **argv, struct OCL_Options *opts);
-struct OCL_Options *parse_args2(int argc, const char **argv);
+int parse_args(int argc, char *const *argv, struct OCL_Options *opts);
+struct OCL_Options *parse_args2(int argc, char *const *argv);
 
 #endif /* opt_h */
