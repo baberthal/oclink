@@ -5,7 +5,6 @@
 //  Created by Morgan Lieberthal on 2/23/16.
 //  Copyright © 2016 J. Morgan Lieberthal. All rights reserved.
 //
-
 #include "fan.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -325,31 +324,31 @@ static char *ocl_fan_get_fan_mode_string(int mode)
 {
     char *mode_string = NULL;
     switch (mode) {
-        case FixedPWM:
-            asprintf(&mode_string, "Fixex PWM");
-            break;
-        case FixedRPM:
-            asprintf(&mode_string, "Fixed RPM");
-            break;
-        case Default:
-            asprintf(&mode_string, "Default");
-            break;
-        case Quiet:
-            asprintf(&mode_string, "Quiet");
-            break;
-        case Balanced:
-            asprintf(&mode_string, "Balanced");
-            break;
-        case Performance:
-            asprintf(&mode_string, "Performance");
-            break;
-        case Custom:
-            asprintf(&mode_string, "Custom");
-            break;
+    case FixedPWM:
+        asprintf(&mode_string, "Fixex PWM");
+        break;
+    case FixedRPM:
+        asprintf(&mode_string, "Fixed RPM");
+        break;
+    case Default:
+        asprintf(&mode_string, "Default");
+        break;
+    case Quiet:
+        asprintf(&mode_string, "Quiet");
+        break;
+    case Balanced:
+        asprintf(&mode_string, "Balanced");
+        break;
+    case Performance:
+        asprintf(&mode_string, "Performance");
+        break;
+    case Custom:
+        asprintf(&mode_string, "Custom");
+        break;
 
-        default:
-            asprintf(&mode_string, "N/A (%02X)", mode);
-            break;
+    default:
+        asprintf(&mode_string, "N/A (%02X)", mode);
+        break;
     }
 
     return mode_string;

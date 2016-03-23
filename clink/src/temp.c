@@ -1,11 +1,3 @@
-//
-//  clink_temp.c
-//  clink
-//
-//  Created by Morgan Lieberthal on 2/23/16.
-//  Copyright © 2016 J. Morgan Lieberthal. All rights reserved.
-//
-
 #include "temp.h"
 #include <stdio.h>
 #include <stdlib.h>

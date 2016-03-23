@@ -7,7 +7,6 @@
 //
 
 #include "opt.h"
-#include "jml_debug.h"
 #include <assert.h>
 #include <clink.h>
 #include <errno.h>
@@ -15,12 +14,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "jml_debug.h"
 
-#include <clink_fan.h>
-#include <clink_led.h>
-#include <clink_proto.h>
-#include <clink_temp.h>
-#include <corsair_link.h>
+#include "fan.h"
+#include "led.h"
+#include "link.h"
+#include "proto.h"
+#include "temp.h"
 
 static int info_flag;
 static int print_flag;
@@ -96,11 +96,9 @@ int parse_args(int argc, char *const *argv, struct OCL_Options *opts)
 
         switch (c) {
         case 0:
-            if (long_options[opt_idx].flag != 0)
-                break;
+            if (long_options[opt_idx].flag != 0) break;
             debug_log("Option %s", long_options[opt_idx].name);
-            if (optarg)
-                debug_log(" with arg %s", optarg);
+            if (optarg) debug_log(" with arg %s", optarg);
 
         default:
             break;
@@ -122,10 +120,12 @@ static void print_version(void)
     printf("oclink (OpenCorsairLink) %s\n", CLINK_VERSION_STRING);
     printf("Copyright (C) 2014 Sean Nelson <audiohacked@gmail.com>\n");
     printf("Copyright (C) 2016 J. Morgan Lieberthal <morgan@jmorgan.org>\n");
-    printf("License GPLv3+: GNU GPL version 3 or later "
-           "<http://www.gnu.org/licenses/>\n");
-    printf("This is free software: you are free to change and redistribute "
-           "it.\n");
+    printf(
+        "License GPLv3+: GNU GPL version 3 or later "
+        "<http://www.gnu.org/licenses/>\n");
+    printf(
+        "This is free software: you are free to change and redistribute "
+        "it.\n");
     printf("There is NO WARRANTY, to the extent permitted by law.\n\n");
     print_help_footer();
 }
@@ -142,11 +142,13 @@ static void print_help(void)
 
     printf("OPTIONS:\n");
     printf("\t-i, --info :Print information about fans, pumps, and LEDs\n");
-    printf("\t-p, --print :Print ALL information about fans, pumps, and "
-           "LEDs\n");
+    printf(
+        "\t-p, --print :Print ALL information about fans, pumps, and "
+        "LEDs\n");
 
-    printf("\t-l, --led <led_number> :Select an LED to configure. Index begins "
-           "at 1.\n");
+    printf(
+        "\t-l, --led <led_number> :Select an LED to configure. Index begins "
+        "at 1.\n");
     printf("\t\t--led-mode <LED_MODE> :Set an LED mode (in HH format).\n");
     printf("\t\t\tPOSSIBLE VALUES FOR <LED_MODE>:\n");
     printf("\t\t\t\t0x00 - Static Color\n");
@@ -155,20 +157,24 @@ static void print_help(void)
     printf("\t\t\t\t0xC0 - Temp Mode (must specify --rgb1 thru --rgb3\n");
 
     printf("\t\tRGB Settings:\n");
-    printf("\t\t Can be hex format (#FFFFFF) or a comma-separated list of "
-           "values up to 255\n");
+    printf(
+        "\t\t Can be hex format (#FFFFFF) or a comma-separated list of "
+        "values up to 255\n");
     printf("\t\t--rgb1 <RGB_Code> :Set color for led cycle 1\n");
     printf("\t\t--rgb2 <RGB_Code> :Set color for led cycle 2\n");
     printf("\t\t--rgb3 <RGB_Code> :Set color for led cycle 3\n");
     printf("\t\t--rgb4 <RGB_Code> :Set color for led cycle 4\n");
 
-    printf("\t-t, --temperature <sensor_number> :Select a Temperature "
-           "Sensor\n");
-    printf("\t\t--temperature-limit <temp_limit> :Set Max Temperature (high "
-           "temp warning)\n");
+    printf(
+        "\t-t, --temperature <sensor_number> :Select a Temperature "
+        "Sensor\n");
+    printf(
+        "\t\t--temperature-limit <temp_limit> :Set Max Temperature (high "
+        "temp warning)\n");
 
-    printf("\t-f, --fan <fan_number>{:<fan_number>} :Selects a fan to setup. "
-           "Accepted values are 1 thru 4.\n");
+    printf(
+        "\t-f, --fan <fan_number>{:<fan_number>} :Selects a fan to setup. "
+        "Accepted values are 1 thru 4.\n");
     printf("\t\t--fan-mode <FAN_MODE> :Sets the mode for the selected fan\n");
     printf("\t\t\tPOSSIBLE VALUES FOR <FAN_MODE>:\n");
     printf("\t\t\t\t 2 - Fixed PWM (must specify --fan-pwm)\n");
@@ -177,12 +183,15 @@ static void print_help(void)
     printf("\t\t\t\t 8 - Quiet\n");
     printf("\t\t\t\t10 - Balanced\n");
     printf("\t\t\t\t12 - Performance\n");
-    printf("\t\t--fan-pwm <fan_PWM> :The desired PWM speed for the selected "
-           "fan. NOTE: it only works when fan mode is set to Fixed PWM\n");
-    printf("\t\t--fan-rpm <fan_RPM> :The desired RPM for the selected fan. "
-           "NOTE: it works only when fan mode is set to Fixed RPM\n");
-    printf("\t\t--fan-warning <fan_threshold> :Sets the Fan Warning Limit "
-           "(Sets Underspeed Threshold).\n");
+    printf(
+        "\t\t--fan-pwm <fan_PWM> :The desired PWM speed for the selected "
+        "fan. NOTE: it only works when fan mode is set to Fixed PWM\n");
+    printf(
+        "\t\t--fan-rpm <fan_RPM> :The desired RPM for the selected fan. "
+        "NOTE: it works only when fan mode is set to Fixed RPM\n");
+    printf(
+        "\t\t--fan-warning <fan_threshold> :Sets the Fan Warning Limit "
+        "(Sets Underspeed Threshold).\n");
 
     print_help_footer();
 }

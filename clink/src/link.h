@@ -25,10 +25,11 @@ typedef struct OCL_Link {
     uint32_t command_id;  ///< The command id of the link
     int device_id;  ///< The device ID, as read by the \ref OCL_Link structure
     struct hid_device_info *device_info;  ///< HID Device Info for the system
-                                          /**
-                                           *  @brief A pointer to a function to wrap HID calls for associated
-                                           *   structures to use
-                                           */
+
+    /**
+     *  @brief A pointer to a function to wrap HID calls for associated
+     *   structures to use
+     */
     int (*hid_wrapper)(hid_device *handle, cl_buf_t *buf, size_t buf_size);
     /**
      *  @brief A pointer to a function to wrap HID read calls
@@ -46,11 +47,28 @@ typedef enum {
 } OCL_CorsairModels;
 
 /**
+ *  @brief Allocate a CorsairLink structure.
+ *
+ *  @return The structure
+ */
+OCL_Link *ocl_link_alloc(void);
+
+/**
  *  @brief Allocate and initialize the shared link structure
  *
  *  @return The shared link structure. Should always return the same structure
  */
 OCL_Link *ocl_link_shared_link(void);
+
+/**
+ *  @brief Initialize a CorsairLink structure. It must first be allocated using
+ *  \ref ocl_link_alloc().
+ *
+ *  @param link The link to initialize
+ *
+ *  @return 0 if successful, -1 otherwise
+ */
+int ocl_link_init(OCL_Link *link);
 
 /**
  *  @brief Close the link

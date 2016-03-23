@@ -1,11 +1,3 @@
-//
-//  clink_temp.h
-//  clink
-//
-//  Created by Morgan Lieberthal on 2/23/16.
-//  Copyright © 2016 J. Morgan Lieberthal. All rights reserved.
-//
-
 #ifndef clink_temp_h
 #define clink_temp_h
 

@@ -6,8 +6,8 @@
 //  Copyright © 2016 J. Morgan Lieberthal. All rights reserved.
 //
 
-#include <clink.h>
 #include <stdio.h>
+#include "clink.h"
 
 int main(int argc, const char *argv[])
 {

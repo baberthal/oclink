@@ -9,14 +9,14 @@
 #ifndef opt_h
 #define opt_h
 
-#include <clink_led.h>
+#include <led.h>
 #include <stdio.h>
 
 /**
  *  @brief A struct to hold an option
  */
 typedef struct OCLOption {
-    const char *name; ///< The name of the option
+    const char *name;  ///< The name of the option
 } OCLOption;
 
 struct OCL_Options {

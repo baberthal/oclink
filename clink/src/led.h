@@ -1,18 +1,10 @@
-//
-//  clink_led.h
-//  clink
-//
-//  Created by Morgan Lieberthal on 2/23/16.
-//  Copyright © 2016 J. Morgan Lieberthal. All rights reserved.
-//
+#ifndef clink_led_h
+#define clink_led_h
 
 /** @file clink_led.h
  *  @defgroup Led clink Led
  *  @{
  */
-
-#ifndef clink_led_h
-#define clink_led_h
 
 #include "link.h"
 
