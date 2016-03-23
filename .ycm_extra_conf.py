@@ -40,18 +40,26 @@ flags = [
     '-x',
     'c',
     '-DDEBUG',
-    '-I/Users/morgan/projects/c_family/oclink/clink',
-    '-I/Users/morgan/projects/c_family/oclink/clink/include',
-    '-I/Users/morgan/projects/c_family/oclink/clink/test',
-    '-I/Users/morgan/projects/c_family/oclink/clink/test/../src',
-    '-I/Users/morgan/projects/c_family/oclink/debug',
-    '-I/Users/morgan/projects/c_family/oclink/oclink',
-    '-I/private/var/folders/m5/6g8cjj6j5pgdxv6sgn4fht0w0000gn/T/tmp0co67j',
-    '-I/usr/local/Cellar/check/HEAD/include',
+    '-I/Users/morgan/projects/c_family/oclink/build',
+    '-I/Users/morgan/projects/c_family/oclink/src',
     '-I/usr/local/include',
+    '-I/Users/morgan/projects/c_family/oclink/src/.',
+    '-I/Users/morgan/projects/c_family/oclink/build/src',
+    '-I/private/var/folders/m5/6g8cjj6j5pgdxv6sgn4fht0w0000gn/T/tmp0co67j',
     '-Wall',
     '-Wextra',
     '-std=c99',
+    '-Dlibclink_EXPORTS',
+    '-pedantic',
+    '-Wno-gnu-zero-variadic-macro-arguments',
+    '-g',
+    '-ggdb',
+    '-O1',
+    '-fPIC',
+    '-DCLINK_STATIC_DEFINE',
+    '-I/Users/morgan/projects/c_family/oclink/test',
+    '-I/Users/morgan/projects/c_family/oclink/test/../src',
+    '-I/usr/local/Cellar/check/HEAD/include'
 ]
 
 
@@ -123,7 +131,7 @@ def GetCompilationInfoForFile( filename ):
       replacement_file = basename + extension
       if os.path.exists( replacement_file ):
         compilation_info = database.GetCompilationInfoForFile(
-          replacement_file )
+            replacement_file )
         if compilation_info.compiler_flags_:
           return compilation_info
     return None
@@ -139,15 +147,15 @@ def FlagsForFile( filename, **kwargs ):
       return None
 
     final_flags = MakeRelativePathsInFlagsAbsolute(
-      compilation_info.compiler_flags_,
-      compilation_info.compiler_working_dir_ )
+        compilation_info.compiler_flags_,
+        compilation_info.compiler_working_dir_ )
 
   else:
     relative_to = DirectoryOfThisScript()
     final_flags = MakeRelativePathsInFlagsAbsolute( flags, relative_to )
 
   return {
-    'flags': final_flags,
-    'do_cache': True
-  }
+      'flags': final_flags,
+      'do_cache': True
+      }
 

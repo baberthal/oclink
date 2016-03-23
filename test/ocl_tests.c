@@ -98,13 +98,7 @@ START_TEST(test_temp_sensors)
     ck_assert_int_eq(rc, 0);
 
     float temperature = ocl_temp_get_temp(temp);
-    fprintf(stderr, "Current Temperature: %.2f\n", temperature);
-
-    rc = ocl_temp_select_sensor(temp, 1);
-    fprintf(stderr, "Selecting sensor %d\n", rc);
-    ck_assert_int_eq(rc, 1);
-
-    temperature = ocl_temp_get_temp(temp);
+    ck_assert_int_ne(temperature, 0);
     fprintf(stderr, "Current Temperature: %.2f\n", temperature);
 }
 END_TEST
