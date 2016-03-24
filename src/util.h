@@ -140,9 +140,9 @@ CLINK_EXPORT void *ocl_list_remove(OCL_List *list, OCL_ListNode *node);
  *  @param V the name of the variable to use for each step of iteration. this
  *           variable is available within the block of the macro.
  */
-#define JLIST_FOREACH(L, S, M, V) \
-    OCL_ListNode *_node = NULL;   \
-    OCL_ListNode *V = NULL;       \
+#define OCL_LIST_FOREACH(L, S, M, V) \
+    OCL_ListNode *_node = NULL;      \
+    OCL_ListNode *V = NULL;          \
     for (V = _node = L->S; _node != NULL; V = _node = _node->M)
 
 /**

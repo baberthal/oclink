@@ -9,7 +9,7 @@ OCL_List *ocl_list_create(void)
 
 void ocl_list_destroy(OCL_List *list)
 {
-    JLIST_FOREACH(list, first, next, cur)
+    OCL_LIST_FOREACH(list, first, next, cur)
     {
         if (cur->prev) {
             free(cur->prev);
@@ -22,7 +22,7 @@ void ocl_list_destroy(OCL_List *list)
 
 void ocl_list_clear(OCL_List *list)
 {
-    JLIST_FOREACH(list, first, next, cur)
+    OCL_LIST_FOREACH(list, first, next, cur)
     {
         free(cur->value);
     }
@@ -30,7 +30,7 @@ void ocl_list_clear(OCL_List *list)
 
 void ocl_list_clear_destroy(OCL_List *list)
 {
-    JLIST_FOREACH(list, first, next, cur)
+    OCL_LIST_FOREACH(list, first, next, cur)
     {
         if (cur->value) {
             free(cur->value);
@@ -157,7 +157,7 @@ int ocl_list_bubble_sort(OCL_List *list, ocl_list_compare_cb cmp)
 
     do {
         sorted = 1;
-        JLIST_FOREACH(list, first, next, cur)
+        OCL_LIST_FOREACH(list, first, next, cur)
         {
             if (cur->next) {
                 if (cmp(cur->value, cur->next->value) > 0) {
@@ -212,7 +212,7 @@ OCL_List *ocl_list_merge_sort(OCL_List *list, ocl_list_compare_cb cmp)
 
     int mid = ocl_list_count(list) / 2;
 
-    JLIST_FOREACH(list, first, next, cur)
+    OCL_LIST_FOREACH(list, first, next, cur)
     {
         if (mid > 0) {
             ocl_list_push(left, cur->value);
