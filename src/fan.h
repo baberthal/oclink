@@ -2,6 +2,7 @@
 #define clink_fan_h
 
 #include "link.h"
+#include "util.h"
 
 /** \file clink_fan.h
  *  @defgroup Fan clink Fan
@@ -26,7 +27,7 @@ typedef struct ocl_fan_info {
 typedef struct ocl_fan {
     /// A list (or array, if you will) of `CorsairFanInfo` structures attached
     /// to the system
-    CorsairFanInfo fan_info[32];
+    OCL_List *fan_info;
     int fan_count;   ///< The number of fans attached to the system
     OCL_Link *link;  ///< The associated link structure
 } OCL_Fan;

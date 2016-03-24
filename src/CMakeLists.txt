@@ -9,13 +9,15 @@ set(HEADERS
     fan.h
     led.h
     link.h
-    temp.h)
+    temp.h
+    util.h)
 
 set(LIBRARY_SOURCES
     link.c
     fan.c
     led.c
     temp.c
+    util.c
     ${HEADERS})
 
 set(PROGRAM "clink")

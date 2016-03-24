@@ -48,16 +48,23 @@
     fprintf(stderr, "[INFO] - " MESSAGE_FORMAT M "\n", __FILENAME__, __LINE__, \
             __PRETTY_FUNCTION__, ##__VA_ARGS__)
 
-#define jml_check(assertion, message, ...)     \
+#define cl_check(assertion, message, ...)      \
     do {                                       \
         if (!(assertion)) {                    \
             log_error(message, ##__VA_ARGS__); \
         }                                      \
     } while (0)
 
-#ifndef check
-#define check(assertion, message, ...) jml_check(assertion, message, ...)
-#endif /* check */
+#define jml_check cl_check
+
+#define cl_check_jmp(assertion, message, ...)  \
+    do {                                       \
+        if (!(assertion)) {                    \
+            log_error(message, ##__VA_ARGS__); \
+            errno = 0;                         \
+            goto error;                        \
+        }                                      \
+    } while (0)
 
 #define sentinel(jmp, MESSAGE, ...)        \
     {                                      \
@@ -66,11 +73,20 @@
         goto jmp;                          \
     }
 
-#define check_mem(A) jml_check((A), "No memory.")
+#define check_mem(A) cl_check((A), "No memory.")
+
+#define check_mem_jmp(A) cl_check_jmp((A), "No memory.")
 
 #define check_debug(A, M, ...)      \
     if (!(A)) {                     \
         debug_log(M, ##__VA_ARGS__) \
+    }
+
+#define check_debug_jmp(A, M, ...)   \
+    if (!(A)) {                      \
+        debug_log(M, ##__VA_ARGS__); \
+        errno = 0;                   \
+        goto error;                  \
     }
 
 #endif /* jml_debug_h */

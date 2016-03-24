@@ -7,29 +7,11 @@
 //
 
 #include "link.h"
-#include <dispatch/dispatch.h>
 #include <stdarg.h>
 #include <string.h>
+#include "config.h"
 #include "jml_debug.h"
 #include "proto.h"
-
-#define SLEEP(ms)          \
-    do {                   \
-        usleep(ms * 1000); \
-        sleep_total += ms; \
-    } while (0)
-
-#if DEBUG
-#define DEBUG_HID_READ(buf)                                                  \
-    do {                                                                     \
-        for (size_t _z = 0; _z < sizeof((buf)); _z++) {                      \
-            fprintf(stdout, "[DEBUG] - %s [%s:%d] %02X\n",                   \
-                    __PRETTY_FUNCTION__, __FILENAME__, __LINE__, (buf)[_z]); \
-        }                                                                    \
-    } while (0)
-#else
-#define DEBUG_HID_READ(buf)
-#endif
 
 static const unsigned short CorsairVendorID = 0x1b1c;
 static const unsigned short CorsairProductID = 0x0c04;
@@ -56,6 +38,7 @@ static int hid_read_wrapper(hid_device *handle, cl_buf_t *buf)
 
 static int hid_wrapper(hid_device *handle, cl_buf_t *buf, size_t buf_size)
 {
+    DEBUG_HID_WRITE(buf);
     int res = hid_write(handle, buf, buf_size);
     jml_check(res >= 0, "Unable to write. -- %ls", hid_error(handle));
 
@@ -94,7 +77,8 @@ int ocl_link_init(OCL_Link *link)
     link->handle = hid_open(CorsairVendorID, CorsairProductID, NULL);
     if (!link->handle) {
         fprintf(stderr,
-                "[ERROR] - Unable to open Corsair H80i, H100i or H110i "
+                "[ERROR] - Unable to open Corsair H80i, "
+                "H100i or H110i "
                 "CPU Cooler.\n");
         return -1;
     }
@@ -110,20 +94,6 @@ int ocl_link_init(OCL_Link *link)
     }
 
     return 0;
-}
-
-OCL_Link *ocl_link_shared_link(void)
-{
-    static OCL_Link *sharedLink = NULL;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-      sharedLink = ocl_link_alloc();
-      if (sharedLink) {
-          ocl_link_init(sharedLink);
-      }
-    });
-
-    return sharedLink;
 }
 
 void ocl_link_close(OCL_Link *link)

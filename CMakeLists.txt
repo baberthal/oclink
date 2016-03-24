@@ -87,6 +87,9 @@ if(TAGS)
     add_custom_target(
         do_tags ALL
         DEPENDS tags
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_BINARY_DIR}/tags
+        ${PROJECT_SOURCE_DIR}/.git/tags
     )
 endif(TAGS)
 

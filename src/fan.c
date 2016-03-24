@@ -17,6 +17,7 @@ OCL_Fan *ocl_fan_alloc(OCL_Link *link)
     OCL_Fan *fan = malloc(sizeof(OCL_Fan));
     fan->link = link;
     fan->fan_count = ocl_fan_get_fan_count(fan);
+    fan->fan_info = ocl_list_create();
 
     return fan;
 }

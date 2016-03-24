@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "config.h"
 #include "jml_debug.h"
 #include "proto.h"
 
@@ -67,6 +68,7 @@ int ocl_temp_get_temp_sensors(OCL_Temp *temp)
     link->buf[2] = ReadOneByte;
     link->buf[3] = TEMP_CountSensors;
 
+    DEBUG_HID_WRITE(link->buf);
     int res = hid_write(link->handle, link->buf, 11);
     jml_check(res >= 0, "Unable to write -- %ls", hid_error(link->handle));
     res = link->hid_read_wrapper(link->handle, link->buf);

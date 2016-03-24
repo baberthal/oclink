@@ -22,7 +22,7 @@ typedef unsigned char cl_buf_t;
  */
 typedef struct OCL_Link {
     hid_device *handle;   ///< The HID Device Handle for the CorsairLink system
-    cl_buf_t buf[256];    ///< The buffer to read and write HID Commands
+    cl_buf_t buf[64];    ///< The buffer to read and write HID Commands
     uint32_t command_id;  ///< The command id of the link
     int device_id;  ///< The device ID, as read by the \ref OCL_Link structure
     struct hid_device_info *device_info;  ///< HID Device Info for the system
@@ -53,13 +53,6 @@ typedef enum {
  *  @return The structure
  */
 CLINK_EXPORT OCL_Link *ocl_link_alloc(void);
-
-/**
- *  @brief Allocate and initialize the shared link structure
- *
- *  @return The shared link structure. Should always return the same structure
- */
-CLINK_EXPORT OCL_Link *ocl_link_shared_link(void);
 
 /**
  *  @brief Initialize a CorsairLink structure. It must first be allocated using
