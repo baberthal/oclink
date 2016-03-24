@@ -2,7 +2,7 @@
 
 require 'colorize'
 require 'open3'
-require 'ruby-progressbar'
+require 'optparse'
 
 class JMLRunner
   class TCase # rubocop:disable Metrics/ClassLength
@@ -13,17 +13,21 @@ class JMLRunner
       @env = options[:env]
       @log_file = options[:log_file]
       @failures = []
+      @errors = []
       @test_stderr = StringIO.new
-      @progressbar = ProgressBar.create
+      @other_messages = StringIO.new
     end
 
-    def run
-      puts start_message
+    def run # rubocop:disable Metrics/AbcSize
+      start_message
       Open3.popen3(@env, @name) do |_, sout, serr, _|
         while (line = sout.gets) do conditional_puts(line) end
         while (line_err = serr.gets) do @test_stderr.puts(line_err) end
       end
-      puts nil, 'STDERR:'.colorize(:green).bold, @test_stderr.string
+      print_unhandled_output
+      $stdout.puts nil, 'STDERR:'.colorize(:green).bold, @test_stderr.string
+      @log_file.puts nil, 'OTHER MESSAGES:'.colorize(:white).bold,
+                     @other_messages.string
     end
 
     private
@@ -58,8 +62,8 @@ class JMLRunner
     end
 
     def start_message
-      puts '=' * term_width
-      puts "Running #{File.basename(@name)}".colorize(:yellow)
+      $stdout.puts '=' * term_width
+      $stdout.puts "Running #{File.basename(@name)}".colorize(:yellow)
     end
 
     def summary_pattern
@@ -75,10 +79,18 @@ class JMLRunner
 
     def line_type(line)
       case line
-      when /Passed$/ then return :pass
-      when /(Checks)(.+)(Failures)(.+)(Errors)(.+)|Results/ then return :summary
-      when /:F:/i then return :failure
-      when /Error$/ then return :error
+      when /Passed$/ then :pass
+      when /(Checks)(.+)(Failures)(.+)(Errors)(.+)|Results/ then :summary
+      when /:F:/i then :failure
+      when /^\(null\):/ then :error
+      else extra_line_types(line)
+      end
+    end
+
+    def extra_line_types(line)
+      case line
+      when /^\[DEBUG/ then :debug_message
+      when /^Running suite/ then :extraneous
       end
     end
 
@@ -86,9 +98,46 @@ class JMLRunner
       case line_type(line)
       when :pass then print '.'.colorize(:green)
       when :failure then handle_failure(line)
-      when :error then puts line.colorize(:yellow)
+      when :error then handle_error(line)
       when :summary then generate_summary(line)
+      when :debug_message then log_debug_message(line)
+      else handle_extra(line)
       end
+    end
+
+    def handle_extra(line)
+      @log_file.puts line
+    end
+
+    def log_debug_message(line)
+      match = debug_message_pattern.match(line)
+      return unless match
+      @other_messages.puts format_debug_msg(match)
+    end
+
+    def debug_message_pattern
+      @debug_message_pattern ||= %r{
+      ^\[(?<type>[\w\s]+)\]\s*-\s*
+      (?<return_type>\w+)?\s*(?<fn_name>\w+)?\(?((?<args>.+)?\))?\s*
+      (\[(?<filename>[\w\.]+):(?<line>\d+)\])?\s*
+      (?<message>.+)$
+      }x
+    end
+
+    def format_debug_msg(match)
+      msg = []
+      msg << "[#{match[:type].red}] - [#{match[:filename]}:#{match[:line]}]"
+      msg << extract_fn_from_debug(match)
+      msg << match[:message].strip.white
+      "#{msg.join("\n")}\n\n"
+    end
+
+    def extract_fn_from_debug(match) # rubocop:disable Metrics/AbcSize
+      fn = "#{match[:return_type].to_s.yellow} #{match[:fn_name].to_s.blue}"
+      arg_mapper = ->(arg) { arg.strip.gsub(/\w+/) { |m| m.to_s.yellow } }
+      args = (match[:args] || '').split(',').map(&arg_mapper)
+      fn << "(#{args.join(', ')})"
+      fn
     end
 
     def generate_summary(line) # rubocop:disable Metrics/AbcSize
@@ -101,27 +150,33 @@ class JMLRunner
       @summary << "#{match[:n_failures]} Failures, ".colorize(:red)
       @summary << "#{match[:n_errors]} Errors".colorize(:yellow)
       @summary << ')'
-      print_unhandled_output
     end
 
     def print_unhandled_output
-      puts @summary
+      $stdout.puts @summary
       unless @failures.empty?
-        puts "\nFAILURES\n========".colorize(:red).bold
-        puts @failures.join("\n\n")
+        $stdout.puts "\nFAILURES\n==========".colorize(:red).bold
+        $stdout.puts @failures.join("\n\n")
+        $stdout.puts "\nERRORS\n==========".colorize(:yellow).bold
+        $stdout.puts @errors.join("\n\n")
       end
     end
 
     def handle_failure(line)
-      print 'F'.colorize(:red)
+      $stdout.print 'F'.colorize(:red)
       match = failure_pattern.match(line)
-      return unless match
+      return line unless match
       @failures << colorize_fail_msg(match)
+    end
+
+    def handle_error(line)
+      $stdout.print '*'.colorize(:yellow)
+      @errors << line
     end
 
     def colorize_fail_msg(match) # rubocop:disable Metrics/AbcSize
       file = File.basename(match[:file])
-      this = "#{file.to_s.colorize(:white)}:#{match[:line].colorize(:blue)}"
+      this = "#{file.to_s.colorize(:white)}:#{match[:line].to_s.blue}"
       this << "\nTest Case: #{match[:tcase].to_s.colorize(:yellow)}\n"
       this << "Function: #{match[:fn].to_s.colorize(:blue)}\n"
       this << 'Reason: '
@@ -149,14 +204,40 @@ class JMLRunner
   attr_reader :log_file
   attr_accessor :env
 
-  def initialize(file_path)
-    @file_path = File.expand_path(file_path)
+  def initialize(argv)
+    @argv = argv
+    @options = {
+      quiet: false,
+      log_file: $stdout
+    }
+
+    parse!
+    @env = {}
+    check_env
+    @env.merge!(ENV)
+  end
+
+  def parser
+    @parser ||= OptionParser.new do |opts|
+      opts.on('-q', '--quiet', 'Silence Logging') { |q| @options[:quiet] = q }
+      opts.on('-lLOG_FILE', '--log-file=LOG_FILE', 'Set log file') do |log_file|
+        @options[:log_file] = File.open(File.expand_path(log_file), 'w+')
+      end
+    end
+  end
+
+  def parse!
+    parser.parse! @argv
+    @file_path = File.expand_path(@argv.shift)
+    raise ArgumentError, 'No such file/directory' unless File.exist?(@file_path)
+    @other_args = @argv
+    setup_run
+  end
+
+  def setup_run
     @built_products = Dir["#{File.expand_path(file_path)}/*"].select do |f|
       f =~ /(.+)_tests?$/
     end
-    @log_file = ENV['LOG_FILE'] || File.join(@file_path, 'tests.log')
-    @env = {}
-    check_env
   end
 
   def check_env
@@ -185,11 +266,12 @@ class JMLRunner
     puts 'Running Tests:'.colorize(:white).bold
     puts test_list
     @built_products.each { |p| run_one(p) }
+    @log_file.close if @log_file.is_a? File
   end
 
   def run_one(test)
-    TCase.new(test, env: @env, log_file: @log_file).run
+    TCase.new(test, env: @env, log_file: @options[:log_file]).run
   end
 end
 
-JMLRunner.new(ARGV.first).run
+JMLRunner.new(ARGV).run
