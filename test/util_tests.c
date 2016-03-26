@@ -1,5 +1,4 @@
-#include <check.h>
-#include <stdlib.h>
+#include "ocl_tests.h"
 
 #include "jml_debug.h"
 #include "util.h"
@@ -155,7 +154,7 @@ START_TEST(test_merge_sort)
 }
 END_TEST
 
-Suite *util_suite(void)
+Suite *create_util_suite(void)
 {
     Suite *suite;
     TCase *tc_core;
@@ -182,16 +181,4 @@ Suite *util_suite(void)
     suite_add_tcase(suite, tc_sort);
 
     return suite;
-}
-
-int main(void)
-{
-    Suite *suite = util_suite();
-    SRunner *runner = srunner_create(suite);
-    int n_failed;
-    srunner_run_all(runner, CK_ENV);
-    n_failed = srunner_ntests_failed(runner);
-    srunner_free(runner);
-
-    return (n_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

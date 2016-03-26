@@ -34,6 +34,7 @@ endif(OCL_TESTS)
 
 if(OCL_COVERAGE)
     include(LLVMCoverage)
+    include(CodeCoverage)
 endif(OCL_COVERAGE)
 
 set(PROJECT_NAME "clink")
@@ -81,7 +82,6 @@ if(OCL_TESTS)
     add_subdirectory(test)
     enable_testing()
 
-    add_test(NAME util_test_suite COMMAND util_tests)
     add_test(NAME ocl_test_suite COMMAND ocl_tests)
 endif(OCL_TESTS)
 
