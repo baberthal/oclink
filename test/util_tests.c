@@ -90,6 +90,14 @@ START_TEST(test_shift)
 }
 END_TEST
 
+START_TEST(test_empty)
+{
+    ck_assert_int_eq(ocl_list_count(list), 3);
+    ocl_list_empty(list);
+    ck_assert_int_eq(ocl_list_count(list), 0);
+}
+END_TEST
+
 static char *values_to_sort[] = {"XXXX", "1234", "abcd", "xjvef", "NDSS"};
 #define VALUE_COUNT 5
 
@@ -165,6 +173,7 @@ Suite *util_suite(void)
     tcase_add_checked_fixture(tc_extra, setup, teardown);
     tcase_add_test(tc_extra, test_remove);
     tcase_add_test(tc_extra, test_shift);
+    tcase_add_test(tc_extra, test_empty);
     suite_add_tcase(suite, tc_extra);
 
     tc_sort = tcase_create("Sorting Algos");
