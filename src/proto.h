@@ -246,9 +246,15 @@ enum CorsairFanModes {
     Custom = 0x0E
 };
 
+enum CorsairDeviceStatus {
+    CorsairDeviceStatus_OK = 0x00,
+    CorsairDeviceStatus_Bad = 0xFF
+};
+
 typedef enum CorsairLinkCommands CorsairLink_Command;
 typedef enum _CorsairLinkOpCodes CorsairLink_OpCode;
 typedef enum CorsairLedModes CorsairLink_LEDMode;
 typedef enum CorsairFanModes CorsairLink_FanMode;
+typedef enum CorsairDeviceStatus CorsairLink_DeviceStatus;
 
 #endif /* clink_proto_h */

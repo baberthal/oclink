@@ -28,6 +28,14 @@ void ocl_list_clear(OCL_List *list)
     }
 }
 
+void ocl_list_empty(OCL_List *list)
+{
+    OCL_LIST_FOREACH(list, first, next, cur)
+    {
+        (void)ocl_list_remove(list, cur);
+    }
+}
+
 void ocl_list_clear_destroy(OCL_List *list)
 {
     OCL_LIST_FOREACH(list, first, next, cur)

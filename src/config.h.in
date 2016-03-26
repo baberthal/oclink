@@ -30,7 +30,7 @@
         sleep_total += ms;    \
     } while (0)
 
-#if DEBUG
+#if DEBUG_HID
 #define DEBUG_HID_READ(buf)                                                \
     do {                                                                   \
         fprintf(stdout, "[DEBUG READ] - %s [%s:%d] ", __PRETTY_FUNCTION__, \

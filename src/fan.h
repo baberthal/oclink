@@ -81,6 +81,15 @@ CLINK_EXPORT void ocl_fan_read_fans_info(OCL_Fan *fan, int idx,
                                          CorsairFanInfo *fan_info);
 
 /**
+ * @brief Read the information of all the attached fans into memory
+ *
+ * @param fan The fan who's info to read
+ *
+ * @return 0 if successful, -1 otherwise
+ */
+CLINK_EXPORT int ocl_fan_read_all_info(OCL_Fan *fan);
+
+/**
  *  Set the information for fan at index idx using the values in the structure
  * `fan_info`
  *
@@ -98,7 +107,14 @@ CLINK_EXPORT int ocl_fan_set_fans_info(OCL_Fan *fan, int idx,
  *
  *  \param fan The fan to dump values for
  */
-CLINK_EXPORT void ocl_fan_print_info(CorsairFanInfo fan);
+CLINK_EXPORT void ocl_fan_print_info(CorsairFanInfo *fan);
+
+/**
+ * @brief Dump all the info for the fan's attached fans to stdout
+ *
+ * @param fan The fan to dump
+ */
+CLINK_EXPORT void ocl_fan_dump(OCL_Fan *fan);
 
 /**
  *  Select a connected fan to perform further operations on

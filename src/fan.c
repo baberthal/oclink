@@ -12,6 +12,9 @@
 #include "jml_debug.h"
 #include "proto.h"
 
+#define DEBUG_HID 1
+#include "config.h"
+
 OCL_Fan *ocl_fan_alloc(OCL_Link *link)
 {
     OCL_Fan *fan = malloc(sizeof(OCL_Fan));
@@ -52,13 +55,24 @@ int ocl_fan_current_fan(OCL_Fan *fan)
 int ocl_fan_get_fan_count(OCL_Fan *fan)
 {
     OCL_Link *cl = fan->link;
+    memset(cl->buf, 0x00, sizeof(cl->buf));
     cl->buf[0] = 0x03;
     cl->buf[1] = cl->command_id++;
-    cl->buf[2] = WriteOneByte;
+    cl->buf[2] = ReadOneByte;
     cl->buf[3] = FAN_Count;
-    cl->buf[4] = 0x00;
 
-    cl->hid_wrapper(cl->handle, cl->buf, 8);
+    int res = hid_write(cl->handle, cl->buf, 5);
+    if (res < 0) {
+        fprintf(stderr, "Unable to write (%ls)\n", hid_error(cl->handle));
+    }
+    res = cl->hid_read_wrapper(cl->handle, cl->buf);
+
+    if (res < 0) {
+        fprintf(stderr, "Unable to read (%ls)\n", hid_error(cl->handle));
+    }
+
+    fprintf(stderr, "number of fans %02hhx\n", cl->buf[2]);
+
     return cl->buf[2];
 }
 
@@ -326,7 +340,7 @@ static char *ocl_fan_get_fan_mode_string(int mode)
     char *mode_string = NULL;
     switch (mode) {
     case FixedPWM:
-        asprintf(&mode_string, "Fixex PWM");
+        asprintf(&mode_string, "Fixed PWM");
         break;
     case FixedRPM:
         asprintf(&mode_string, "Fixed RPM");
@@ -355,11 +369,26 @@ static char *ocl_fan_get_fan_mode_string(int mode)
     return mode_string;
 }
 
-void ocl_fan_print_info(CorsairFanInfo fan)
+void ocl_fan_print_info(CorsairFanInfo *fan)
 {
-    fprintf(stdout, "%s:\n", fan.name);
-    fprintf(stdout, "\tMode: %s\n", ocl_fan_get_fan_mode_string(fan.mode));
-    fprintf(stdout, "\tRPM: %i\n", fan.rpm);
+    fprintf(stdout, "%s:\n", fan->name);
+    fprintf(stdout, "\tMode: %s\n", ocl_fan_get_fan_mode_string(fan->mode));
+    fprintf(stdout, "\tRPM: %i\n", fan->rpm);
+}
+
+void ocl_fan_dump(OCL_Fan *fan)
+{
+    int n_fans = ocl_fan_connected_fans(fan);
+    if (n_fans <= 0) {
+        return;
+    }
+
+    ocl_fan_read_all_info(fan);
+
+    OCL_LIST_FOREACH(fan->fan_info, first, next, current)
+    {
+        ocl_fan_print_info(current->value);
+    }
 }
 
 int ocl_fan_connected_fans(OCL_Fan *fan)
@@ -454,6 +483,37 @@ void ocl_fan_read_fans_info(OCL_Fan *fan, int idx, CorsairFanInfo *fan_info)
     fan_info->rpm = rpm;
 }
 
+int ocl_fan_read_all_info(OCL_Fan *fan)
+{
+    int n_fans = ocl_fan_connected_fans(fan);
+    if (n_fans <= 0) {
+        debug_log("Unable to get the number of fans.");
+        return -1;
+    }
+
+    if (fan->fan_info == NULL) {
+        fan->fan_info = ocl_list_create();
+    }
+    else if (ocl_list_count(fan->fan_info) != 0) {
+        ocl_list_empty(fan->fan_info);
+    }
+
+    int i;
+    for (i = 0; i < n_fans; i++) {
+        CorsairFanInfo *fan_info = calloc(1, sizeof(CorsairFanInfo));
+        ocl_fan_read_fans_info(fan, i, fan_info);
+        ocl_list_push(fan->fan_info, fan_info);
+    }
+
+    if (ocl_list_count(fan->fan_info) != (uint32_t)n_fans) {
+        debug_log("Unable to read all fan info. Read %d, expected %d",
+                  ocl_list_count(fan->fan_info), n_fans);
+        return -1;
+    }
+
+    return 0;
+}
+
 int ocl_fan_set_fans_info(OCL_Fan *fan, int idx, CorsairFanInfo fan_info)
 {
     OCL_Link *cl = fan->link;
@@ -513,20 +573,17 @@ int ocl_fan_set_fans_info(OCL_Fan *fan, int idx, CorsairFanInfo fan_info)
         cl->buf[11] = ReadTwoBytes;      // Command Opcode
         cl->buf[12] = FAN_ReadRPM;       // Command data...
 
-        int res = hid_write(cl->handle, cl->buf, 18);
+        printf("FAN RPM\n====================\n");
+        int res = cl->hid_wrapper(cl->handle, cl->buf, 18);
         if (res < 0) {
-            fprintf(stderr, "%s", (char *)hid_error(cl->handle));
+            fprintf(stderr, "%ls", hid_error(cl->handle));
             return 1;
         }
+        printf("====================\n");
 
-        res = cl->hid_read_wrapper(cl->handle, cl->buf);
-        if (res < 0) {
-            fprintf(stderr, "%s", (char *)hid_error(cl->handle));
-            return 1;
-        }
         // All data is little-endian.
-        int rpm = cl->buf[5] << 8;
-        rpm += cl->buf[4];
+        int rpm = cl->buf[9] << 8;
+        rpm += cl->buf[8];
         if (fan_info.rpm != rpm) {
             fprintf(stderr, "Cannot set fan RPM.");
             return 1;

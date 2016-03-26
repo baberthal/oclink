@@ -7,6 +7,7 @@
  */
 
 #include "link.h"
+#include "proto.h"
 
 /**
  *  @brief Represent's an RGB Color
@@ -81,7 +82,16 @@ CLINK_EXPORT int ocl_led_get_led_count(OCL_Led *led);
  *
  *  @return The current LED mode, expressed as an integer
  */
-CLINK_EXPORT int ocl_led_get_mode(OCL_Led *led);
+CLINK_EXPORT CorsairLink_LEDMode ocl_led_get_mode(OCL_Led *led);
+
+/**
+ * @brief Get the string value associated with the mode
+ *
+ * @param mode Mode who's string value to get
+ *
+ * @return String value
+ */
+CLINK_EXPORT char *ocl_led_get_mode_string(CorsairLink_LEDMode mode);
 
 /**
  *  @brief Set the LED mode for the system
@@ -91,7 +101,7 @@ CLINK_EXPORT int ocl_led_get_mode(OCL_Led *led);
  *
  *  @return The new mode, expressed as an integer
  */
-CLINK_EXPORT int ocl_led_set_mode(OCL_Led *led, int mode);
+CLINK_EXPORT int ocl_led_set_mode(OCL_Led *led, CorsairLink_LEDMode mode);
 
 /**
  *  @brief Copy the current LED Color into `color`

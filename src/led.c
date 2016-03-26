@@ -55,7 +55,7 @@ int ocl_led_get_led_count(OCL_Led *led)
     return link->buf[2];
 }
 
-int ocl_led_get_mode(OCL_Led *led)
+CorsairLink_LEDMode ocl_led_get_mode(OCL_Led *led)
 {
     OCL_Link *link = led->link;
     memset(link->buf, 0x00, sizeof(link->buf));
@@ -72,7 +72,27 @@ int ocl_led_get_mode(OCL_Led *led)
     return link->buf[2];
 }
 
-int ocl_led_set_mode(OCL_Led *led, int mode)
+char *ocl_led_get_mode_string(CorsairLink_LEDMode mode)
+{
+    switch (mode) {
+    case StaticColor:
+        return "Static Color";
+
+    case TwoColorCycle:
+        return "Two Color Cycle";
+
+    case FourColorCycle:
+        return "Four Color Cycle";
+
+    case TemperatureColor:
+        return "Temperature Color";
+
+    default:
+        return "Unknown";
+    }
+}
+
+int ocl_led_set_mode(OCL_Led *led, CorsairLink_LEDMode mode)
 {
     OCL_Link *link = led->link;
     memset(link->buf, 0x00, sizeof(link->buf));
@@ -112,6 +132,17 @@ int ocl_led_get_color(OCL_Led *led, struct OCLLedColor *color)
     led->color_set_by.func = 1;
 
     return 0;
+}
+
+struct OCLLedColor *ocl_led_get_color2(OCL_Led *led)
+{
+    struct OCLLedColor *color = calloc(1, sizeof(struct OCLLedColor));
+    int rc = ocl_led_get_color(led, color);
+    if (rc != 0) {
+        return NULL;
+    }
+
+    return color;
 }
 
 int ocl_led_get_temp_color(OCL_Led *led, struct OCLLedColor *color)

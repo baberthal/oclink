@@ -39,11 +39,23 @@ static int hid_read_wrapper(hid_device *handle, cl_buf_t *buf)
 static int hid_wrapper(hid_device *handle, cl_buf_t *buf, size_t buf_size)
 {
     DEBUG_HID_WRITE(buf);
+    int id = buf[1];
+
     int res = hid_write(handle, buf, buf_size);
     jml_check(res >= 0, "Unable to write. -- %ls", hid_error(handle));
+    if (res < 0) {
+        return -1;
+    }
 
     res = hid_read_wrapper(handle, buf);
     jml_check(res >= 0, "Unable to read. -- %ls", hid_error(handle));
+    if (res < 0) {
+        return -1;
+    }
+
+    if (buf[0] != id) {
+        fprintf(stderr, "Got wrong reply: %d (expected %d)\n", buf[0], id);
+    }
 
     return res;
 }
@@ -61,8 +73,8 @@ OCL_Link *ocl_link_alloc(void)
 
 static inline bool is_supported_device(int device_id)
 {
-    return !((device_id != CL_H80i) && (device_id != CL_H100i) &&
-             (device_id != CL_H110i));
+    return (device_id == CL_H80i) || (device_id == CL_H100i) ||
+           (device_id != CL_H110i);
 }
 
 int ocl_link_init(OCL_Link *link)

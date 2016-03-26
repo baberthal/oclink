@@ -68,7 +68,6 @@ int ocl_temp_get_temp_sensors(OCL_Temp *temp)
     link->buf[2] = ReadOneByte;
     link->buf[3] = TEMP_CountSensors;
 
-    DEBUG_HID_WRITE(link->buf);
     int res = hid_write(link->handle, link->buf, 11);
     jml_check(res >= 0, "Unable to write -- %ls", hid_error(link->handle));
     res = link->hid_read_wrapper(link->handle, link->buf);
@@ -98,7 +97,7 @@ float ocl_temp_get_temp(OCL_Temp *temp)
     return (float)temperature / 256;
 }
 
-int ocl_temp_get_temp_limit(OCL_Temp *temp)
+float ocl_temp_get_temp_limit(OCL_Temp *temp)
 {
     OCL_Link *link = temp->link;
 
@@ -113,8 +112,17 @@ int ocl_temp_get_temp_limit(OCL_Temp *temp)
     res = link->hid_read_wrapper(link->handle, link->buf);
     jml_check(res >= 0, "Unable to read -- %ls", hid_error(link->handle));
 
-    int limit = link->buf[5] << 8;
-    limit += link->buf[4];
+    printf("%s -- BUF -- ", __PRETTY_FUNCTION__);
+    for (size_t i = 0; i < sizeof(link->buf); i++) {
+        printf(" %02X", link->buf[i]);
+    }
+    printf("\n");
+
+    int bcd_limit = link->buf[2] << 8;
+    bcd_limit += link->buf[3];
+
+    float limit = (float)bcd_limit / 256;
+    printf("LIMIT: %f\n", limit);
 
     return limit;
 }

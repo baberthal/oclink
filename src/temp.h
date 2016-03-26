@@ -73,7 +73,7 @@ CLINK_EXPORT float ocl_temp_get_temp(OCL_Temp *temp);
  *
  *  @return The temp limit of the selected sensor
  */
-CLINK_EXPORT int ocl_temp_get_temp_limit(OCL_Temp *temp);
+CLINK_EXPORT float ocl_temp_get_temp_limit(OCL_Temp *temp);
 
 /**
  *  @brief Set the temp limit of the selected sensor

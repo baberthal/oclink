@@ -52,6 +52,13 @@ CLINK_EXPORT void ocl_list_destroy(OCL_List *list);
 CLINK_EXPORT void ocl_list_clear(OCL_List *list);
 
 /**
+ * @brief Empty out a list
+ *
+ * @param list The list to empty
+ */
+CLINK_EXPORT void ocl_list_empty(OCL_List *list);
+
+/**
  *  @brief Clear all elements and destroy a list
  *
  *  @param list The list to clear and destroy
