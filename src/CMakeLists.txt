@@ -1,7 +1,5 @@
 set(LIBRARY "libclink")
-
-find_package(HIDAPI REQUIRED)
-include_directories(${HIDAPI_INCLUDE_DIRS})
+set(STATICLIBRARY "libclink_static")
 
 set(HEADERS
     clink.h
@@ -19,6 +17,12 @@ set(LIBRARY_SOURCES
     temp.c
     util.c
     ${HEADERS})
+
+set(EXPORTED_LIBRARY_SOURCES "" PARENT_SCOPE)
+
+foreach(source_file ${LIBRARY_SOURCES})
+    list(APPEND EXPORTED_LIBRARY_SOURCES "../src/${source_file}")
+endforeach(source_file)
 
 set(PROGRAM "clink")
 set(PROGRAM_SOURCES
@@ -58,12 +62,21 @@ set_target_properties(${PROGRAM} PROPERTIES
     COMPILE_FLAGS -DCLINK_STATIC_DEFINE)
 target_link_libraries(${PROGRAM} ${HIDAPI_LIBRARIES})
 
-add_library(${LIBRARY} ${LIBRARY_SOURCES})
+add_library(${LIBRARY} SHARED ${LIBRARY_SOURCES})
 set_target_properties(${LIBRARY} PROPERTIES
     OUTPUT_NAME "clink"
     SOVERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}
     VERSION ${PROJECT_VERSION})
 target_link_libraries(${LIBRARY} ${HIDAPI_LIBRARIES})
+
+add_library(${STATICLIBRARY} STATIC ${LIBRARY_SOURCES})
+set_target_properties(${STATICLIBRARY} PROPERTIES
+    COMPILE_FLAGS -DCLINK_STATIC_DEFINE
+    POSITION_INDEPENDENT_CODE ON
+    OUTPUT_NAME "clink_static"
+    VERSION ${PROJECT_VERSION})
+target_link_libraries(${LIBRARY} ${HIDAPI_LIBRARIES})
+target_link_libraries(${STATICLIBRARY} ${HIDAPI_LIBRARIES})
 
 set_property(TARGET ${LIBRARY} APPEND PROPERTY MACOSX_RPATH true)
 set_target_properties(${LIBRARY} PROPERTIES PDB_NAME clink_dll)
