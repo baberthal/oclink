@@ -35,6 +35,8 @@ endif(OCL_TESTS)
 if(OCL_COVERAGE)
     include(LLVMCoverage)
     include(CodeCoverage)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
 endif(OCL_COVERAGE)
 
 set(PROJECT_NAME "clink")
@@ -65,6 +67,13 @@ endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 if(APPLE)
     set(CMAKE_MACOSX_RPATH ON)
 endif(APPLE)
+
+set(system_libs "")
+
+if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    include_directories(darwin)
+    add_subdirectory(darwin)
+endif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
 
 set(OCL_UTILS_DIR ${CMAKE_CURRENT_LIST_DIR}/debug)
 set(OCL_SCRIPT_DIR ${CMAKE_CURRENT_LIST_DIR}/script)
