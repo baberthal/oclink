@@ -84,3 +84,4 @@ Session.vim
 
 build
 build-mk
+.autoenv.zsh
