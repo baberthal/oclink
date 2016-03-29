@@ -13,8 +13,8 @@
 #include "jml_debug.h"
 #include "proto.h"
 
-static const unsigned short CorsairVendorID = 0x1b1c;
-static const unsigned short CorsairProductID = 0x0c04;
+const unsigned short CorsairVendorID = 0x1b1c;
+const unsigned short CorsairProductID = 0x0c04;
 static const int max_read_wait = 5000;
 
 static int hid_read_wrapper(hid_device *handle, cl_buf_t *buf)
@@ -67,6 +67,7 @@ OCL_Link *ocl_link_alloc(void)
     link->command_id = 0x81;
     link->hid_wrapper = hid_wrapper;
     link->hid_read_wrapper = hid_read_wrapper;
+    link->device_info = hid_enumerate(CorsairVendorID, CorsairProductID);
 
     return link;
 }
@@ -74,7 +75,7 @@ OCL_Link *ocl_link_alloc(void)
 static inline bool is_supported_device(int device_id)
 {
     return (device_id == CL_H80i) || (device_id == CL_H100i) ||
-           (device_id != CL_H110i);
+           (device_id == CL_H110i);
 }
 
 int ocl_link_init(OCL_Link *link)

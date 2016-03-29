@@ -22,7 +22,7 @@ typedef unsigned char cl_buf_t;
  */
 typedef struct OCL_Link {
     hid_device *handle;   ///< The HID Device Handle for the CorsairLink system
-    cl_buf_t buf[64];    ///< The buffer to read and write HID Commands
+    cl_buf_t buf[64];     ///< The buffer to read and write HID Commands
     uint32_t command_id;  ///< The command id of the link
     int device_id;  ///< The device ID, as read by the \ref OCL_Link structure
     struct hid_device_info *device_info;  ///< HID Device Info for the system
@@ -46,6 +46,9 @@ typedef enum {
     CL_H100i = 0x3c,
     CL_H110i = 0x41,
 } OCL_CorsairModels;
+
+extern const unsigned short CorsairVendorID;
+extern const unsigned short CorsairProductID;
 
 /**
  *  @brief Allocate a CorsairLink structure.

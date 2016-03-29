@@ -10,7 +10,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifndef DEBUG_HID
+#define DEBUG_HID 1
 #include "jml_debug.h"
+#endif /* ifndef DEBUG_HID */
+
 #include "proto.h"
 
 OCL_Led *ocl_led_alloc(OCL_Link *link)
@@ -69,7 +74,7 @@ CorsairLink_LEDMode ocl_led_get_mode(OCL_Led *led)
     res = link->hid_read_wrapper(link->handle, link->buf);
     jml_check(res >= 0, "Unable to read -- %ls", hid_error(link->handle));
 
-    return link->buf[2];
+    return link->buf[3];
 }
 
 char *ocl_led_get_mode_string(CorsairLink_LEDMode mode)
@@ -96,13 +101,13 @@ int ocl_led_set_mode(OCL_Led *led, CorsairLink_LEDMode mode)
 {
     OCL_Link *link = led->link;
     memset(link->buf, 0x00, sizeof(link->buf));
-    link->buf[0] = 0x03;
+    link->buf[0] = 0x04;
     link->buf[1] = link->command_id++;
     link->buf[2] = WriteOneByte;
     link->buf[3] = LED_Mode;
     link->buf[4] = mode;
 
-    int res = hid_write(link->handle, link->buf, 11);
+    int res = hid_write(link->handle, link->buf, 0x04);
     jml_check(res >= 0, "Unable to write -- %ls", hid_error(link->handle));
     res = link->hid_read_wrapper(link->handle, link->buf);
     jml_check(res >= 0, "Unable to read -- %ls", hid_error(link->handle));

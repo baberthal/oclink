@@ -89,4 +89,63 @@
         goto error;                  \
     }
 
+#if DEBUG_HID
+#define DEBUG_HID_READ(buf)                                                 \
+    do {                                                                    \
+        fprintf(stdout, "[DEBUG READ] - %s [%s:%d]\n", __PRETTY_FUNCTION__, \
+                __FILENAME__, __LINE__);                                    \
+        for (size_t _z = 0; _z < sizeof((buf)); _z++) {                     \
+            if ((_z + 1) % 16 != 0) {                                       \
+                fprintf(stdout, "%02X ", (buf)[_z]);                        \
+            }                                                               \
+            else {                                                          \
+                fprintf(stdout, "%02X\n", (buf)[_z]);                       \
+            }                                                               \
+        }                                                                   \
+        fprintf(stdout, "\n");                                              \
+    } while (0)
+
+#define DEBUG_HID_WRITE(buf)                                                 \
+    do {                                                                     \
+        fprintf(stdout, "[DEBUG WRITE] - %s [%s:%d]\n", __PRETTY_FUNCTION__, \
+                __FILENAME__, __LINE__);                                     \
+        for (size_t _z = 0; _z < sizeof((buf)); _z++) {                      \
+            if ((_z + 1) % 16 != 0) {                                        \
+                fprintf(stdout, "%02X ", (buf)[_z]);                         \
+            }                                                                \
+            else {                                                           \
+                fprintf(stdout, "%02X\n", (buf)[_z]);                        \
+            }                                                                \
+        }                                                                    \
+        fprintf(stdout, "\n");                                               \
+    } while (0)
+#else
+#define DEBUG_HID_READ(buf)
+#define DEBUG_HID_WRITE(buf)
+#endif
+
+#if DEBUG
+
+#define DEBUG_LINK_STRUCT(link)                                             \
+    do {                                                                    \
+        fprintf(stderr,                                                     \
+                "Link <%p>:\n  Handle: <%p>\n  Command ID: %d (%02X)\n  "   \
+                "Device Id: %02x\n  Buffer:\n ",                            \
+                (void *)(link), (void *)(link)->handle, (link)->command_id, \
+                (link)->command_id, (link)->device_id);                     \
+        for (size_t __i = 0; __i < sizeof((link)->buf); __i++) {            \
+            if (((__i + 1) % 16) == 0) {                                    \
+                fprintf(stderr, " %02X\n ", (link)->buf[__i]);              \
+            }                                                               \
+            else {                                                          \
+                fprintf(stderr, " %02X", (link)->buf[__i]);                 \
+            }                                                               \
+        }                                                                   \
+        fprintf(stderr, "\n\n");                                            \
+    } while (0)
+
+#else
+#define DEBUG_LINK_STRUCT(link)
+#endif
+
 #endif /* jml_debug_h */

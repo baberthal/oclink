@@ -1,3 +1,6 @@
+#ifndef OCL_CONFIG_H
+#define OCL_CONFIG_H 1
+
 #define CLINK_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
 #define CLINK_VERSION_MINOR @PROJECT_VERSION_MINOR@
 #define CLINK_VERSION_PATCH @PROJECT_VERSION_PATCH@
@@ -30,37 +33,7 @@
         sleep_total += ms;    \
     } while (0)
 
-#if DEBUG_HID
-#define DEBUG_HID_READ(buf)                                                \
-    do {                                                                   \
-        fprintf(stdout, "[DEBUG READ] - %s [%s:%d] ", __PRETTY_FUNCTION__, \
-                __FILENAME__, __LINE__);                                   \
-        for (size_t _z = 0; _z < sizeof((buf)); _z++) {                    \
-            if ((_z + 1) % 16 != 0) {                                      \
-                fprintf(stdout, "%02X ", (buf)[_z]);                       \
-            }                                                              \
-            else {                                                         \
-                fprintf(stdout, "%02X\n", (buf)[_z]);                      \
-            }                                                              \
-        }                                                                  \
-        fprintf(stdout, "\n");                                             \
-    } while (0)
 
-#define DEBUG_HID_WRITE(buf)                                                \
-    do {                                                                    \
-        fprintf(stdout, "[DEBUG WRITE] - %s [%s:%d] ", __PRETTY_FUNCTION__, \
-                __FILENAME__, __LINE__);                                    \
-        for (size_t _z = 0; _z < sizeof((buf)); _z++) {                     \
-            if ((_z + 1) % 16 != 0) {                                       \
-                fprintf(stdout, "%02X ", (buf)[_z]);                        \
-            }                                                               \
-            else {                                                          \
-                fprintf(stdout, "%02X\n", (buf)[_z]);                       \
-            }                                                               \
-        }                                                                   \
-        fprintf(stdout, "\n");                                              \
-    } while (0)
-#else
-#define DEBUG_HID_READ(buf)
-#define DEBUG_HID_WRITE(buf)
-#endif
+
+
+#endif /* ifndef OCL_CONFIG_H */
