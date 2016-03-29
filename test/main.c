@@ -19,7 +19,7 @@ static void master_suite_teardown(void)
     ocl_link_free(oclink);
 }
 
-int main(int argc, char *argv[])
+int main(void)
 {
     int n_failed;
     SRunner *runner;
